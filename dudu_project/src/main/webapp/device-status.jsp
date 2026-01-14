@@ -1,61 +1,87 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html dir="ltr" lang="ko">
+<html dir="ltr" lang="en">
 
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>데이터 관리 - DuDu Kickboard</title>
-
+  <meta name="robots" content="noindex,nofollow" />
+  <title>기기 관리 대시보드 - DuDu Kickboard</title>
+  <link rel="canonical" href="https://www.wrappixel.com/templates/niceadmin-lite/" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png" />
   <link href="css/style.min.css" rel="stylesheet" />
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
-    /* 데이터 카드 스타일 */
-    .stat-card {
-      transition: transform 0.2s;
+    /* 상태 텍스트 색상 */
+    .status-danger {
+      color: #dc3545;
+      font-weight: bold;
     }
 
-    .stat-card:hover {
-      transform: translateY(-5px);
+    /* 고장 */
+    .status-warning {
+      color: #ffc107;
+      font-weight: bold;
     }
 
-    .grade-circle {
-      width: 60px;
-      height: 60px;
-      background-color: #28b779;
-      /* A등급 색상 */
-      color: white;
-      border-radius: 50%;
+    /* 배터리 */
+
+    /* 지도 이미지 컨테이너 */
+    .map-container {
+      border: 1px solid #e9ecef;
+      border-radius: 5px;
+      overflow: hidden;
+      text-align: center;
+      background: #fff;
+      padding: 10px;
+      min-height: 400px;
+      /* 높이 확보 */
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
-      font-weight: bold;
-      margin: 0 auto;
+      flex-direction: column;
     }
 
-    /* 기간 설정 영역 스타일 */
-    .filter-box {
-      background: #f8f9fa;
-      border-radius: 5px;
-      padding: 15px;
-      margin-bottom: 20px;
+    .map-img {
+      width: 100%;
+      /* 가로를 꽉 채움 */
+      height: 500px;
+      /* ★ 세로 높이를 500px로 고정 (원하는 숫자로 변경 가능) */
+      object-fit: cover;
+      /* ★ 비율이 안 맞으면 빈 공간 없이 꽉 차게 (넘치는 부분은 잘림) */
+      object-position: center;
+      /* 이미지의 중앙을 보여줌 */
+      border-radius: 4px;
+    }
+
+    /* 테이블 텍스트 정렬 */
+    .table th,
+    .table td {
+      text-align: center;
+      vertical-align: middle;
     }
   </style>
+
 </head>
 
 <body>
+  <div class="preloader">
+    <div class="lds-ripple">
+      <div class="lds-pos"></div>
+      <div class="lds-pos"></div>
+    </div>
+  </div>
+
   <div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full"
     data-boxed-layout="full">
-
     <header class="topbar" data-navbarbg="skin6">
       <nav class="navbar top-navbar navbar-expand-md navbar-light">
         <div class="navbar-header" data-logobg="skin5">
-          <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
-              class="ti-menu ti-close"></i></a>
+          <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
+            <i class="ti-menu ti-close"></i>
+          </a>
           <div class="navbar-brand">
             <a href="main.jsp" class="logo">
               <b class="logo-icon">
@@ -70,7 +96,20 @@
           </div>
         </div>
         <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-          <ul class="navbar-nav float-start me-auto"></ul>
+          <ul class="navbar-nav float-start me-auto">
+            <li class="nav-item search-box">
+              <a class="nav-link waves-effect waves-dark" href="javascript:void(0)">
+                <div class="d-flex align-items-center">
+                  <i class="mdi mdi-magnify font-20 me-1"></i>
+                  <div class="ms-1 d-none d-sm-block"><span>Search</span></div>
+                </div>
+              </a>
+              <form class="app-search position-absolute">
+                <input type="text" class="form-control" placeholder="Search &amp; enter" />
+                <a class="srh-btn"><i class="mdi mdi-close"></i></a>
+              </form>
+            </li>
+          </ul>
           <ul class="navbar-nav float-end">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
@@ -99,10 +138,6 @@
                 </a>
               </div>
             </li>
-            <!-- ============================================================== -->
-            <!-- User profile and search -->
-            <!-- ============================================================== -->
-          </ul>
           </ul>
         </div>
       </nav>
@@ -144,14 +179,14 @@
       <div class="page-breadcrumb">
         <div class="row">
           <div class="col-5 align-self-center">
-            <h4 class="page-title">데이터 통합 관리</h4>
+            <h4 class="page-title">기기 현황 대시보드</h4>
           </div>
           <div class="col-7 align-self-center">
             <div class="d-flex align-items-center justify-content-end">
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">데이터 관리</li>
+                  <li class="breadcrumb-item active" aria-current="page">기기 현황</li>
                 </ol>
               </nav>
             </div>
@@ -162,119 +197,90 @@
       <div class="container-fluid">
 
         <div class="row">
-          <div class="col-12">
-            <div class="card filter-box">
-              <div class="d-flex align-items-center flex-wrap gap-2">
-                <h5 class="mb-0 me-3 fw-bold"><i class="mdi mdi-calendar-clock"></i> 기간 설정:</h5>
-                <input type="date" class="form-control w-auto" value="2026-01-01">
-                <span class="mx-1">~</span>
-                <input type="date" class="form-control w-auto" value="2026-01-13">
-                <button class="btn btn-primary text-white ms-2">조회하기</button>
+          <div class="col-md-3">
+            <div class="card bg-info text-white">
+              <div class="card-body">
+                <h5 class="card-title text-white">전체 기기</h5>
+                <div class="d-flex align-items-center">
+                  <i class="mdi mdi-scooter display-5"></i>
+                  <div class="ms-auto display-5 fw-bold">50</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-danger text-white">
+              <div class="card-body">
+                <h5 class="card-title text-white">사용 불가 (고장)</h5>
+                <div class="d-flex align-items-center">
+                  <i class="mdi mdi-alert-circle-outline display-5"></i>
+                  <div class="ms-auto display-5 fw-bold">3</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-warning text-white">
+              <div class="card-body">
+                <h5 class="card-title text-white">배터리 부족</h5>
+                <div class="d-flex align-items-center">
+                  <i class="mdi mdi-battery-20 display-5"></i>
+                  <div class="ms-auto display-5 fw-bold">5</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-success text-white">
+              <div class="card-body">
+                <h5 class="card-title text-white">정상 가동</h5>
+                <div class="d-flex align-items-center">
+                  <i class="mdi mdi-check-circle-outline display-5"></i>
+                  <div class="ms-auto display-5 fw-bold">42</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-md-3">
-            <div class="card stat-card border-success">
-              <div class="card-body text-center">
-                <h6 class="text-muted">통합 안전 등급</h6>
-                <div class="grade-circle mb-2">A</div>
-                <h3 class="fw-bold text-success">92점</h3>
-                <small class="text-muted">전주 대비 +2점 상승</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card stat-card">
-              <div class="card-body text-center">
-                <h6 class="text-muted">누적 경고 횟수</h6>
-                <i class="mdi mdi-alert text-danger display-5"></i>
-                <h3 class="fw-bold mt-2">124회</h3>
-                <small class="text-danger">최근 3일간 급증 ⚠️</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card stat-card">
-              <div class="card-body text-center">
-                <h6 class="text-muted">평균 헬멧 착용률</h6>
-                <i class="mdi mdi-motorbike text-info display-5"></i>
-                <h3 class="fw-bold mt-2">78.5%</h3>
-                <small class="text-success">목표치(80%) 근접</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card stat-card">
-              <div class="card-body text-center">
-                <h6 class="text-muted">재착용 소요 시간</h6>
-                <i class="mdi mdi-timer-sand text-warning display-5"></i>
-                <h3 class="fw-bold mt-2">18초</h3>
-                <small class="text-muted">경고 후 착용까지 평균</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-lg-8">
+          <div class="col-lg-7">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">📉 일별 경고 및 헬멧 미착용 추이</h4>
-                <canvas id="trendChart" height="100"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">📊 기기별 안전 등급 분포</h4>
-                <canvas id="gradeChart" height="100"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">📋 상세 로그 데이터</h4>
-                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                  <table class="table table-hover table-bordered text-center">
-                    <thead class="table-light">
-                      <tr>
-                        <th>발생 일시</th>
-                        <th>기기 ID</th>
-                        <th>이벤트 유형</th>
-                        <th>재착용 시간</th>
-                        <th>안전 점수 변동</th>
+                <h4 class="card-title">⚠️ 상태 이상 기기 목록</h4>
+                <h6 class="card-subtitle">현재 점검이 필요한 기기 리스트입니다.</h6>
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr class="table-active">
+                        <th scope="col">기기 ID</th>
+                        <th scope="col">상태</th>
+                        <th scope="col">배터리</th>
+                        <th scope="col">현재 위치</th>
+                        <th scope="col">조회</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>2026-01-13 14:30</td>
-                        <td>SC-1004</td>
-                        <td><span class="badge bg-danger">헬멧 미착용</span></td>
-                        <td>25초</td>
-                        <td class="text-danger">-5점</td>
-                      </tr>
-                      <tr>
-                        <td>2026-01-13 13:15</td>
                         <td>SC-1001</td>
-                        <td><span class="badge bg-warning text-dark">급정거 경고</span></td>
-                        <td>-</td>
-                        <td class="text-danger">-2점</td>
+                        <td class="status-danger">사용 불가</td>
+                        <td>0%</td>
+                        <td>광주 동구 중앙초등학교</td>
+                        <td><button class="btn btn-sm btn-outline-dark">위치 확인</button></td>
                       </tr>
                       <tr>
-                        <td>2026-01-13 12:00</td>
+                        <td>SC-1004</td>
+                        <td class="status-warning">배터리 부족</td>
+                        <td>15%</td>
+                        <td>광주 동구 금남로4가</td>
+                        <td><button class="btn btn-sm btn-outline-dark">위치 확인</button></td>
+                      </tr>
+                      <tr>
                         <td>SC-1023</td>
-                        <td><span class="badge bg-success">정상 반납</span></td>
-                        <td>-</td>
-                        <td class="text-success">+1점</td>
+                        <td class="status-danger">센서 오류</td>
+                        <td>82%</td>
+                        <td>광주 동구 예술의 거리</td>
+                        <td><button class="btn btn-sm btn-outline-dark">위치 확인</button></td>
                       </tr>
                     </tbody>
                   </table>
@@ -282,12 +288,26 @@
               </div>
             </div>
           </div>
+
+          <div class="col-lg-5">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">🗺️ 위치 상세 정보</h4>
+                <h6 class="card-subtitle">기기 선택 시 위치가 표시됩니다.</h6>
+
+                <div class="map-container">
+                  <img src="assets/images/map_sample.png" alt="지도 이미지 없음" class="map-img">
+                  <p class="mt-3 text-muted">지도 이미지 예시 화면</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
-
       <footer class="footer text-center">
-        All Rights Reserved by Nice admin. Designed and Developed by <a href="https://www.wrappixel.com">WrapPixel</a>.
+        All Rights Reserved by Nice admin. Designed and Developed by
+        <a href="https://www.wrappixel.com">WrapPixel</a>.
       </footer>
     </div>
   </div>
@@ -312,48 +332,12 @@
 
   <script src="assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/extra-libs/sparkline/sparkline.js"></script>
+  <script src="js/waves.js"></script>
+  <script src="js/sidebarmenu.js"></script>
   <script src="js/custom.min.js"></script>
 
-  <script>
-    // 1. 선 그래프 (추이 분석)
-    const ctx1 = document.getElementById('trendChart').getContext('2d');
-    new Chart(ctx1, {
-      type: 'line',
-      data: {
-        labels: ['1/07', '1/08', '1/09', '1/10', '1/11', '1/12', '1/13'], // X축 날짜
-        datasets: [
-          {
-            label: '경고 횟수',
-            data: [12, 19, 3, 5, 2, 3, 10],
-            borderColor: '#ff6b6b', // 빨간색
-            tension: 0.4
-          },
-          {
-            label: '헬멧 착용률(%)',
-            data: [85, 82, 90, 88, 92, 89, 78],
-            borderColor: '#28b779', // 초록색
-            tension: 0.4
-          }
-        ]
-      },
-      options: { responsive: true }
-    });
-
-    // 2. 도넛 그래프 (등급 분포)
-    const ctx2 = document.getElementById('gradeChart').getContext('2d');
-    new Chart(ctx2, {
-      type: 'doughnut',
-      data: {
-        labels: ['A등급 (안전)', 'B등급 (보통)', 'C등급 (위험)'],
-        datasets: [{
-          data: [30, 15, 5],
-          backgroundColor: ['#28b779', '#ffca2c', '#dc3545'],
-          hoverOffset: 4
-        }]
-      }
-    });
-  </script>
-
+  
 
 
 </body>
