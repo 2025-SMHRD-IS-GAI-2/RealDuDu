@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dudu.database.CSInquiryMapper">
+
+    <!-- ===================== -->
+    <!-- 1️⃣ 고객 문의 등록 -->
+    <!-- ===================== -->
+    <insert id="insert" parameterType="com.dudu.model.CSInquiry">
+        INSERT INTO TB_CS_INQUIRY
+        (
+            CS_NO,
+            USER_ID,
+            CS_TITLE,
+            CS_TYPE,
+            CS_CONT,
+            PROC_ST,
+            REG_DT
+        )
+        VALUES
+        (
+            CS_SEQ.NEXTVAL,
+            #{userId},
+            #{csTitle},
+            #{csType},
+            #{csCont},
+            'R',
+            SYSDATE
+        )
+    </insert>
+
+    <!-- ===================== -->
+    <!-- 2️⃣ 관리자 전체 문의 조회 -->
+    <!-- ===================== -->
+    <select id="selectAll" resultType="com.dudu.model.CSInquiry">
+        SELECT
+            CS_NO,
+            USER_ID,
+            CS_TITLE,
+            CS_TYPE,
+            CS_CONT,
+            ANSWER_CONT,
+            PROC_ST,
+            REG_DT
+        FROM TB_CS_INQUIRY
+        ORDER BY REG_DT DESC
+    </select>
+
+    <!-- ===================== -->
+    <!-- 3️⃣ 관리자 답변 등록 -->
+    <!-- ===================== -->
+    <update id="updateAnswer" parameterType="com.dudu.model.CSInquiry">
+        UPDATE TB_CS_INQUIRY
+        SET
+            ANSWER_CONT = #{answerCont},
+            PROC_ST = #{procSt}
+        WHERE CS_NO = #{csNo}
+    </update>
+
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dudu.database.RideMapper">
+
+    <!-- 이용 시작 -->
+    <insert id="startRide" parameterType="com.dudu.model.Ride">
+        INSERT INTO TB_RIDE
+        (
+            RIDE_ID,
+            USER_ID,
+            KICKBOARD_ID,
+            RIDE_ST
+        )
+        VALUES
+        (
+            #{rideId},
+            #{userId},
+            #{kickboardId},
+            #{rideSt}
+        )
+    </insert>
+
+    <!-- 이용 종료 (Python 계산 결과 반영) -->
+    <update id="endRide" parameterType="com.dudu.model.Ride">
+        UPDATE TB_RIDE
+        SET
+            START_DT = #{startDt},
+            END_DT   = #{endDt},
+            HELMET_TM = #{helmetTm},
+            SCORE_CG = #{scoreCg},
+            RIDE_ST  = #{rideSt}
+        WHERE RIDE_ID = #{rideId}
+    </update>
+
+</mapper>
