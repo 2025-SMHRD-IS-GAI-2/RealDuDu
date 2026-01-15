@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dudu.database.KickboardMapper">
+
+    <!-- ===================== -->
+    <!-- 킥보드 등록 (관리자) -->
+    <!-- ===================== -->
+    <insert id="insert" parameterType="com.dudu.model.Kickboard">
+        INSERT INTO TB_KICKBOARD
+        (
+            KICKBOARD_ID,
+            MODEL_NM,
+            KICKBOARD_ST,
+            REG_DT
+        )
+        VALUES
+        (
+            #{kickboardId},
+            #{modelNm},
+            #{kickboardSt},
+            SYSDATE
+        )
+    </insert>
+
+    <!-- ===================== -->
+    <!-- 킥보드 전체 조회 -->
+    <!-- ===================== -->
+    <select id="selectAll" resultType="com.dudu.model.Kickboard">
+        SELECT
+            KICKBOARD_ID AS kickboardId,
+            MODEL_NM     AS modelNm,
+            KICKBOARD_ST AS kickboardSt,
+            REG_DT       AS regDt
+        FROM TB_KICKBOARD
+        ORDER BY REG_DT DESC
+    </select>
+
+    <!-- ===================== -->
+    <!-- 킥보드 상태 변경 -->
+    <!-- ===================== -->
+    <update id="updateStatus" parameterType="com.dudu.model.Kickboard">
+        UPDATE TB_KICKBOARD
+        SET KICKBOARD_ST = #{kickboardSt}
+        WHERE KICKBOARD_ID = #{kickboardId}
+    </update>
+
+</mapper>

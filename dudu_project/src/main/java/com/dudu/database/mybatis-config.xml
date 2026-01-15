@@ -17,5 +17,6 @@
   <mappers>
     <mapper resource="com/dudu/database/UserMapper.xml"/>
     <mapper resource="com/dudu/database/AdminMapper.xml"/>
+    <mapper resource="com/dudu/database/KickboardMapper.xml"/>
   </mappers>
 </configuration>

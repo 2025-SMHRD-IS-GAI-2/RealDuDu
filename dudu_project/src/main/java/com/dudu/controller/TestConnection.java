@@ -9,7 +9,7 @@ public class TestConnection {
         try {
             // 1. 파이썬 서버 주소 (로컬호스트:8000)
             // 쿼리스트링(?kickboard_id=KICK_01)으로 데이터를 같이 보냅니다.
-        	String urlStr = "http://192.168.219.176:8001/helmet-check?kickboard_id=KICK_01";
+        	String urlStr = "http://192.168.219.176:8001/helmet-check?kickboard_id=DD010";
             URL url = new URL(urlStr);
 
             // 2. 연결 설정
