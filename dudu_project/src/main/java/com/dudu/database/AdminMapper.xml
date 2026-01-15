@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dudu.database.AdminMapper">
+
+    <!-- ===================== -->
+    <!-- 관리자 회원가입 -->
+    <!-- ===================== -->
+    <insert id="join" parameterType="com.dudu.model.Admin">
+        INSERT INTO TB_ADMIN
+        (
+            ADMIN_ID,
+            ADMIN_PW,
+            ADMIN_NM,
+            REG_DT
+        )
+        VALUES
+        (
+            #{adminId},
+            #{adminPw},
+            #{adminNm},
+            SYSDATE
+        )
+    </insert>
+
+    <!-- ===================== -->
+    <!-- 관리자 로그인 -->
+    <!-- ===================== -->
+    <select id="login"
+            parameterType="com.dudu.model.Admin"
+            resultType="com.dudu.model.Admin">
+        SELECT
+            ADMIN_ID AS adminId,
+            ADMIN_PW AS adminPw,
+            ADMIN_NM AS adminNm,
+            REG_DT   AS regDt
+        FROM TB_ADMIN
+        WHERE TRIM(ADMIN_ID) = TRIM(#{adminId})
+          AND TRIM(ADMIN_PW) = TRIM(#{adminPw})
+    </select>
+
+</mapper>
