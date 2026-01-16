@@ -58,22 +58,18 @@
           <!-- Logo -->
           <!-- ============================================================== -->
           <div class="navbar-brand">
-            <a href="main.jsp" class="logo">
+            <a href="index.jsp" class="logo">
               <!-- Logo icon -->
               <b class="logo-icon">
                 <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                <!-- Dark Logo icon -->
-                <img src="assets/images/DuDu_LOGO.jpg" alt="homepage" class="dark-logo" />
                 <!-- Light Logo icon -->
-                <img src="assets/images/DuDu_LOGO.jpg" alt="homepage" class="light-logo" />
+                <img src="assets/images/logo2.jpg" alt="homepage" class="light-logo" />
               </b>
               <!--End Logo icon -->
               <!-- Logo text -->
               <span class="logo-text">
-                <!-- dark Logo text -->
-                <img src="assets/images/DuDu_LOGOtext.png" alt="homepage" class="dark-logo" />
                 <!-- Light Logo text -->
-                <img src="assets/images/DuDu_LOGOtext.png" class="light-logo" alt="homepage" />
+                <img src="assets/images/logo.png" class="light-logo" alt="homepage" />
               </span>
             </a>
           </div>
@@ -115,16 +111,15 @@
           <!-- ============================================================== -->
           <!-- Right side toggle and nav items -->
           <!-- ============================================================== -->
+        </div>
+        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
+          <ul class="navbar-nav float-start me-auto"></ul>
           <ul class="navbar-nav float-end">
-            <!-- ============================================================== -->
-            <!-- User profile and search -->
-            <!-- ============================================================== -->
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">관리자</span>
-                <img class="img-profile rounded-circle" src="img/undraw_profile.svg" style="width: 30px; height: 30px;">
-              </a>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                <img src="assets/images/Ellipse 2.png" class="rounded-circle" style="width:30px;height:30px;">
 
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
 
@@ -150,6 +145,7 @@
             <!-- User profile and search -->
             <!-- ============================================================== -->
           </ul>
+          </ul>
         </div>
       </nav>
     </header>
@@ -172,26 +168,33 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="device-status.jsp"
-                aria-expanded="false">
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="device-status.jsp" aria-expanded="false">
                 <i class="mdi mdi-account-network"></i>
                 <span class="hide-menu">기기현황</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="service-center.jsp"
-                aria-expanded="false">
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="service-center.jsp" aria-expanded="false">
                 <i class="mdi mdi-arrange-bring-forward"></i>
                 <span class="hide-menu">고객센터</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="data-management.jsp"
-                aria-expanded="false">
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="data-management.jsp" aria-expanded="false">
                 <i class="mdi mdi-border-none"></i>
                 <span class="hide-menu">데이터 관리</span>
               </a>
             </li>
+            <li class="sidebar-item">
+                <a
+                  class="sidebar-link waves-effect waves-dark sidebar-link"
+                  href="user-status.jsp"
+                  aria-expanded="false"
+                >
+                  <i class="mdi mdi-face"></i>
+                  <span class="hide-menu">유저 관리</span>
+                </a>
+              </li>
           </ul>
         </nav>
         <!-- End Sidebar navigation -->
@@ -211,7 +214,7 @@
       <div class="page-breadcrumb">
         <div class="row">
           <div class="col-5 align-self-center">
-            <h4 class="page-title">Dashboard</h4>
+            <h4 class="page-title"></h4>
           </div>
           <div class="col-7 align-self-center">
             <div class="d-flex align-items-center justify-content-end">

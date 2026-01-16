@@ -6,81 +6,190 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords"
+    content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, Nice lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, Nice admin lite design, Nice admin lite dashboard bootstrap 5 dashboard template" />
+  <meta name="description"
+    content="Nice Admin Lite is powerful and clean admin dashboard template, inpired from Bootstrap Framework" />
   <meta name="robots" content="noindex,nofollow" />
-  <title>기기 관리 대시보드 - DuDu Kickboard</title>
+  <title>Nice Admin Lite Template by WrapPixel</title>
   <link rel="canonical" href="https://www.wrappixel.com/templates/niceadmin-lite/" />
+  <!-- Favicon icon -->
   <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png" />
+  <!-- Custom CSS -->
+  <link href="assets/libs/chartist/dist/chartist.min.css" rel="stylesheet" />
+  <!-- Custom CSS -->
   <link href="css/style.min.css" rel="stylesheet" />
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
-  <style>
-    /* 상태 텍스트 색상 */
-    .status-danger {
-      color: #dc3545;
-      font-weight: bold;
+    <style>
+       * {
+      box-sizing: border-box;
+      font-family: "Pretendard", Arial, sans-serif;
     }
 
-    /* 고장 */
-    .status-warning {
-      color: #ffc107;
-      font-weight: bold;
+    body {
+      margin: 0;
+      background: #f4f6f8;
     }
 
-    /* 배터리 */
+    /* ===== 전체 ===== */
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
 
-    /* 지도 이미지 컨테이너 */
-    .map-container {
-      border: 1px solid #e9ecef;
-      border-radius: 5px;
-      overflow: hidden;
-      text-align: center;
+    .page-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    /* ===== 카드 ===== */
+    .card {
       background: #fff;
-      padding: 10px;
-      min-height: 400px;
-      /* 높이 확보 */
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    /* ===== 상단 영역 ===== */
+    .top-section {
       display: flex;
+      gap: 20px;
+    }
+
+    .profile-card {
+      flex: 2;
+      display: flex;
+      gap: 20px;
       align-items: center;
-      justify-content: center;
-      flex-direction: column;
     }
 
-    .map-img {
-      width: 100%;
-      /* 가로를 꽉 채움 */
-      height: 500px;
-      /* ★ 세로 높이를 500px로 고정 (원하는 숫자로 변경 가능) */
-      object-fit: cover;
-      /* ★ 비율이 안 맞으면 빈 공간 없이 꽉 차게 (넘치는 부분은 잘림) */
-      object-position: center;
-      /* 이미지의 중앙을 보여줌 */
+    .avatar {
+      width: 80px;
+      height: 80px;
+      background: #e0e0e0;
+      border-radius: 50%;
+    }
+
+    .profile-info p {
+      margin: 6px 0;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .checkbox-group {
+      margin-top: 10px;
+    }
+
+    .checkbox-group label {
+      margin-right: 15px;
+      font-size: 13px;
+    }
+
+    /* ===== 활동 정보 ===== */
+    .activity-card {
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .activity-card p {
+      margin: 6px 0;
+      color: #555;
+    }
+
+    /* ===== 포인트 ===== */
+    .point-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .point-form select,
+    .point-form input {
+      padding: 6px;
+      font-size: 13px;
+    }
+
+    .point-form button {
+      background: #1e88e5;
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
       border-radius: 4px;
+      cursor: pointer;
     }
 
-    /* 테이블 텍스트 정렬 */
-    .table th,
-    .table td {
-      text-align: center;
-      vertical-align: middle;
+    /* ===== 테이블 ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
     }
 
-    a{
-      text-decoration: none;
-      color: black;
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #e0e0e0;
+      text-align: left;
     }
-  </style>
 
+    th {
+      background: #f9fafb;
+      font-weight: 600;
+    }
+
+    .text-plus {
+      color: #1e88e5;
+      font-weight: 500;
+    }
+
+    .text-minus {
+      color: #e53935;
+      font-weight: 500;
+    }
+
+    /* ===== 반응형 ===== */
+    @media (max-width: 900px) {
+      .top-section {
+        flex-direction: column;
+      }
+    }
+    </style>
 </head>
 
 <body>
+  <!-- ============================================================== -->
+  <!-- Preloader - style you can find in spinners.css -->
+  <!-- ============================================================== -->
   <div class="preloader">
     <div class="lds-ripple">
       <div class="lds-pos"></div>
       <div class="lds-pos"></div>
     </div>
   </div>
-
+  <!-- ============================================================== -->
+  <!-- Main wrapper - style you can find in pages.scss -->
+  <!-- ============================================================== -->
   <div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full"
     data-boxed-layout="full">
+    <!-- ============================================================== -->
+    <!-- Topbar header - style you can find in pages.scss -->
+    <!-- ============================================================== -->
     <header class="topbar" data-navbarbg="skin6">
       <nav class="navbar top-navbar navbar-expand-md navbar-light">
         <div class="navbar-header" data-logobg="skin5">
@@ -235,187 +344,126 @@
       </div>
       <!-- End Sidebar scroll-->
     </aside>
+    <!-- ============================================================== -->
+    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Page wrapper  -->
+    <!-- ============================================================== -->
     <div class="page-wrapper">
+      <!-- ============================================================== -->
+      <!-- Bread crumb and right sidebar toggle -->
+      <!-- ============================================================== -->
       <div class="page-breadcrumb">
         <div class="row">
           <div class="col-5 align-self-center">
-            <h4 class="page-title">기기 현황 대시보드</h4>
+            <h4 class="page-title"></h4>
           </div>
           <div class="col-7 align-self-center">
             <div class="d-flex align-items-center justify-content-end">
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">기기 현황</li>
+                  <li class="breadcrumb-item">
+                    <a href="#">홈</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                   유저 정보
+                  </li>
                 </ol>
               </nav>
             </div>
           </div>
         </div>
       </div>
+      <!-- ============================================================== -->
+      <!-- End Bread crumb and right sidebar toggle -->
+      <!-- ============================================================== -->
+      <!-- ============================================================== -->
+      <!-- Container fluid  -->
+      <!-- ============================================================== -->
+      <div class="container">
 
-      <div class="container-fluid">
+  <div class="page-title">유저 상세 정보</div>
 
-        <div class="row">
-          <div class="col-md-3">
-            <div class="card bg-info text-white">
-              <div class="card-body">
-                <h5 class="card-title text-white">전체 기기</h5>
-                <div class="d-flex align-items-center">
-                  <i class="mdi mdi-scooter display-5"></i>
-                  <div class="ms-auto display-5 fw-bold">50</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card bg-danger text-white">
-              <div class="card-body">
-                <h5 class="card-title text-white">사용 불가 (고장)</h5>
-                <div class="d-flex align-items-center">
-                  <i class="mdi mdi-alert-circle-outline display-5"></i>
-                  <div class="ms-auto display-5 fw-bold">3</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card bg-warning text-white">
-              <div class="card-body">
-                <h5 class="card-title text-white">배터리 부족</h5>
-                <div class="d-flex align-items-center">
-                  <i class="mdi mdi-battery-20 display-5"></i>
-                  <div class="ms-auto display-5 fw-bold">5</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card bg-success text-white">
-              <div class="card-body">
-                <h5 class="card-title text-white">정상 가동</h5>
-                <div class="d-flex align-items-center">
-                  <i class="mdi mdi-check-circle-outline display-5"></i>
-                  <div class="ms-auto display-5 fw-bold">42</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+  <!-- 상단 -->
+  <div class="top-section">
 
-        <div class="row">
-          <div class="col-lg-7">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">⚠️ 상태 이상 기기 목록</h4>
-                <h6 class="card-subtitle">현재 점검이 필요한 기기 리스트입니다.</h6>
-                <div class="table-responsive">
-                  <table class="table table-hover">
-                    <thead>
-                      <tr class="table-active">
-                        <th scope="col">기기 ID</th>
-                        <th scope="col">상태</th>
-                        <th scope="col">배터리</th>
-                        <th scope="col">현재 위치</th>
-                        <th scope="col">조회</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>SC-1001</td>
-                        <td class="status-danger">사용 불가</td>
-                        <td>0%</td>
-                        <td>광주 동구 중앙초등학교</td>
-                        <td><button class="btn btn-sm btn-outline-dark"><a href="device-detail.jsp">위치 확인</a></button></td>
-                      </tr>
-                      <tr>
-                        <td>SC-1004</td>
-                        <td class="status-warning">배터리 부족</td>
-                        <td>15%</td>
-                        <td>광주 동구 금남로4가</td>
-                        <td><button class="btn btn-sm btn-outline-dark">위치 확인</button></td>
-                      </tr>
-                      <tr>
-                        <td>SC-1023</td>
-                        <td class="status-danger">센서 오류</td>
-                        <td>82%</td>
-                        <td>광주 동구 예술의 거리</td>
-                        <td><button class="btn btn-sm btn-outline-dark">위치 확인</button></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div class="d-flex justify-content-center mt-3">
-                    <nav aria-label="Page navigation">
-                      <ul class="pagination">
-                        <li class="page-item disabled">
-                          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">이전</a>
-                        </li>
-
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
-
-                        <li class="page-item">
-                          <a class="page-link" href="#">다음</a>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-5">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">🗺️ 위치 상세 정보</h4>
-                <h6 class="card-subtitle">기기 선택 시 위치가 표시됩니다.</h6>
-
-                <div class="map-container">
-                  <img src="assets/images/map.png" alt="지도 이미지 없음" class="map-img">
-                  <p class="mt-3 text-muted">지도 이미지 예시 화면</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <footer class="footer text-center">
-        All Rights Reserved by Nice admin. Designed and Developed by
-        <a href="https://www.wrappixel.com">WrapPixel</a>.
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">로그아웃 하시겠습니까?</h5>
-          <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-body">현재 세션을 종료하시려면 '로그아웃' 버튼을 눌러주세요.</div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">취소</button>
-          <a class="btn btn-primary" href="login.jsp">로그아웃</a>
-        </div>
+    <!-- 회원 정보 -->
+    <div class="card profile-card">
+      <div class="avatar"></div>
+      <div class="profile-info">
+        <div class="card-title">유저 정보</div>
+        <p><strong>이름:</strong> 이름</p>
+        <p><strong>이메일:</strong> t*******@naver.com</p>
       </div>
     </div>
+
+    <!-- 활동 정보 -->
+    <div class="card activity-card">
+      <div class="card-title">유저 상세 정보</div>
+      <p>아이디: 아이디</p>
+      <p>안전 등급: 2</p>
+      <p>안전 점수: 80</p>
+      <p>가입일: 2026-01-13</p>
+      <p>최근 로그인: 2026-01-15</p>
+    </div>
+
   </div>
 
+  <!-- 포인트 -->
+  <div class="card">
+    <div class="card-title">주행 기록</div>
+
+    <div class="point-form">
+      <select>
+        <option>오름차순</option>
+        <option>내림차순</option>
+      </select>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>일자</th>
+          <th>거리</th>
+          <th>안전 점수</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2026-01-15</td>
+          <td>1km</td>
+          <td class="text-plus">+13</td>
+        </tr>
+        <tr>
+          <td>2026-01-07</td>
+          <td>1km</td>
+          <td class="text-minus">+5</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+  <!-- ============================================================== -->
+  <!-- All Jquery -->
+  <!-- ============================================================== -->
   <script src="assets/libs/jquery/dist/jquery.min.js"></script>
+  <!-- Bootstrap tether Core JavaScript -->
   <script src="assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- slimscrollbar scrollbar JavaScript -->
   <script src="assets/extra-libs/sparkline/sparkline.js"></script>
+  <!--Wave Effects -->
   <script src="js/waves.js"></script>
+  <!--Menu sidebar -->
   <script src="js/sidebarmenu.js"></script>
+  <!--Custom JavaScript -->
   <script src="js/custom.min.js"></script>
+  <!--This page JavaScript -->
+  <!--chartis chart-->
+  <script src="assets/libs/chartist/dist/chartist.min.js"></script>
+  <script src="assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
+  <script src="js/pages/dashboards/dashboard1.js"></script>
 
 
 

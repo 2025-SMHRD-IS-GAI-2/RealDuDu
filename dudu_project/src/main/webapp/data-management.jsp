@@ -7,11 +7,31 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>데이터 관리 - DuDu Kickboard</title>
 
-  <link href="css/style.min.css" rel="stylesheet" />
+  <meta name="keywords"
+    content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, Nice lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, Nice admin lite design, Nice admin lite dashboard bootstrap 5 dashboard template" />
+  <meta name="description"
+    content="Nice Admin Lite is powerful and clean admin dashboard template, inpired from Bootstrap Framework" />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <title>두두 DuDu</title>
+
+  <link rel="canonical" href="https://www.wrappixel.com/templates/niceadmin-lite/" />
+
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png" />
+
+  <link href="assets/libs/chartist/dist/chartist.min.css" rel="stylesheet" />
+
+   <link href="css/style.min.css" rel="stylesheet" />
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
 
   <style>
     /* 데이터 카드 스타일 */
@@ -45,30 +65,105 @@
       padding: 15px;
       margin-bottom: 20px;
     }
+
+    .stat-card .card-body h6 {
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .card-body i,
+    .stat-card .card-body .grade-circle {
+      display: block;
+      margin: 0 auto;
+      height: 60px;
+      /* 아이콘 영역 통일 */
+      line-height: 60px;
+      /* 아이콘 세로 정렬 */
+
+    }    
   </style>
 </head>
 
 <body>
+  <div class="preloader">
+    <div class="lds-ripple">
+      <div class="lds-pos"></div>
+      <div class="lds-pos"></div>
+    </div>
+  </div>
+  <!-- ============================================================== -->
+  <!-- Main wrapper - style you can find in pages.scss -->
+  <!-- ============================================================== -->
   <div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full"
     data-boxed-layout="full">
-
+    <!-- ============================================================== -->
+    <!-- Topbar header - style you can find in pages.scss -->
+    <!-- ============================================================== -->
     <header class="topbar" data-navbarbg="skin6">
       <nav class="navbar top-navbar navbar-expand-md navbar-light">
         <div class="navbar-header" data-logobg="skin5">
-          <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
-              class="ti-menu ti-close"></i></a>
+          <!-- This is for the sidebar toggle which is visible on mobile only -->
+          <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
+            <i class="ti-menu ti-close"></i>
+          </a>
+          <!-- ============================================================== -->
+          <!-- Logo -->
+          <!-- ============================================================== -->
           <div class="navbar-brand">
-            <a href="main.jsp" class="logo">
+            <a href="index.jsp" class="logo">
+              <!-- Logo icon -->
               <b class="logo-icon">
-                <img src="assets/images/DuDu_LOGO.jpg" alt="homepage" class="dark-logo" />
-                <img src="assets/images/DuDu_LOGO.jpg" alt="homepage" class="light-logo" />
+                <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+                <!-- Light Logo icon -->
+                <img src="assets/images/logo2.jpg" alt="homepage" class="light-logo" />
               </b>
+              <!--End Logo icon -->
+              <!-- Logo text -->
               <span class="logo-text">
-                <img src="assets/images/DuDu_LOGOtext.png" alt="homepage" class="dark-logo" />
-                <img src="assets/images/DuDu_LOGOtext.png" class="light-logo" alt="homepage" />
+                <!-- Light Logo text -->
+                <img src="assets/images/logo.png" class="light-logo" alt="homepage" />
               </span>
             </a>
           </div>
+          <!-- ============================================================== -->
+          <!-- End Logo -->
+          <!-- ============================================================== -->
+          <!-- ============================================================== -->
+          <!-- Toggle which is visible on mobile only -->
+          <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Logo -->
+        <!-- ============================================================== -->
+        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
+          <!-- ============================================================== -->
+          <!-- toggle and nav items -->
+          <!-- ============================================================== -->
+          <ul class="navbar-nav float-start me-auto">
+            <!-- ============================================================== -->
+            <!-- Search -->
+            <!-- ============================================================== -->
+            <li class="nav-item search-box">
+              <a class="nav-link waves-effect waves-dark" href="javascript:void(0)">
+                <div class="d-flex align-items-center">
+                  <i class="mdi mdi-magnify font-20 me-1"></i>
+                  <div class="ms-1 d-none d-sm-block">
+                    <span>Search</span>
+                  </div>
+                </div>
+              </a>
+              <form class="app-search position-absolute">
+                <input type="text" class="form-control" placeholder="Search &amp; enter" />
+                <a class="srh-btn">
+                  <i class="mdi mdi mdi-close"></i>
+                </a>
+              </form>
+            </li>
+          </ul>
+          <!-- ============================================================== -->
+          <!-- Right side toggle and nav items -->
+          <!-- ============================================================== -->
+
         </div>
         <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
           <ul class="navbar-nav float-start me-auto"></ul>
@@ -76,9 +171,8 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">관리자</span>
-                <img class="img-profile rounded-circle" src="img/undraw_profile.svg" style="width: 30px; height: 30px;">
-              </a>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                <img src="assets/images/Ellipse 2.png" class="rounded-circle" style="width:30px;height:30px;">
 
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
 
@@ -108,39 +202,67 @@
         </div>
       </nav>
     </header>
-
+    <!-- ============================================================== -->
+    <!-- End Topbar header -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Left Sidebar - style you can find in sidebar.scss  -->
+    <!-- ============================================================== -->
     <aside class="left-sidebar" data-sidebarbg="skin5">
+      <!-- Sidebar scroll-->
       <div class="scroll-sidebar">
+        <!-- Sidebar navigation-->
         <nav class="sidebar-nav">
           <ul id="sidebarnav">
             <li class="sidebar-item">
               <a class="sidebar-link waves-effect waves-dark sidebar-link" href="main.jsp" aria-expanded="false">
-                <i class="mdi mdi-av-timer"></i><span class="hide-menu">메인</span>
+                <i class="mdi mdi-av-timer"></i>
+                <span class="hide-menu">메인</span>
               </a>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link waves-effect waves-dark sidebar-link" href="device-status.jsp"
                 aria-expanded="false">
-                <i class="mdi mdi-account-network"></i><span class="hide-menu">기기현황</span>
+                <i class="mdi mdi-account-network"></i>
+                <span class="hide-menu">기기현황</span>
               </a>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link waves-effect waves-dark sidebar-link" href="service-center.jsp"
                 aria-expanded="false">
-                <i class="mdi mdi-arrange-bring-forward"></i><span class="hide-menu">고객 센터</span>
+                <i class="mdi mdi-arrange-bring-forward"></i>
+                <span class="hide-menu">고객센터</span>
               </a>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link waves-effect waves-dark sidebar-link" href="data-management.jsp"
                 aria-expanded="false">
-                <i class="mdi mdi-border-none"></i><span class="hide-menu">데이터 관리</span>
+                <i class="mdi mdi-border-none"></i>
+                <span class="hide-menu">데이터 관리</span>
               </a>
             </li>
+            <li class="sidebar-item">
+                <a
+                  class="sidebar-link waves-effect waves-dark sidebar-link"
+                  href="user-status.jsp"
+                  aria-expanded="false"
+                >
+                  <i class="mdi mdi-face"></i>
+                  <span class="hide-menu">유저 관리</span>
+                </a>
+              </li>
           </ul>
         </nav>
+        <!-- End Sidebar navigation -->
       </div>
+      <!-- End Sidebar scroll-->
     </aside>
-
+    <!-- ============================================================== -->
+    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Page wrapper  -->
+    <!-- ============================================================== -->
     <div class="page-wrapper">
       <div class="page-breadcrumb">
         <div class="row">
@@ -178,7 +300,7 @@
 
         <div class="row">
           <div class="col-md-3">
-            <div class="card stat-card border-success">
+            <div class="card stat-card">
               <div class="card-body text-center">
                 <h6 class="text-muted">통합 안전 등급</h6>
                 <div class="grade-circle mb-2">A</div>
@@ -232,7 +354,7 @@
           <div class="col-lg-4">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">📊 기기별 안전 등급 분포</h4>
+                <h4 class="card-title">📊 사용자 안전 등급 분포</h4>
                 <canvas id="gradeChart" height="100"></canvas>
               </div>
             </div>
@@ -293,23 +415,23 @@
     </div>
   </div>
 
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">로그아웃 하시겠습니까?</h5>
-                <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">현재 세션을 종료하시려면 '로그아웃' 버튼을 눌러주세요.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">취소</button>
-                <a class="btn btn-primary" href="login.jsp">로그아웃</a>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">로그아웃 하시겠습니까?</h5>
+          <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
         </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">취소</button>
+          <a class="btn btn-primary" href="login.jsp">로그아웃</a>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
   <script src="assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -354,9 +476,6 @@
       }
     });
   </script>
-
-
-
 </body>
 
 </html>

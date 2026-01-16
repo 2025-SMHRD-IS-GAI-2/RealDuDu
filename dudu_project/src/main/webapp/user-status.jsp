@@ -48,7 +48,9 @@
   margin-left: auto;
   margin-bottom: 10px;
 }
-
+.row-link {
+  cursor: pointer;
+}
   </style>
 </head>
 
@@ -163,6 +165,14 @@
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     로그아웃
                   </a>
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#alert">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    알람1
+                  </a>
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#alert2">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    알람2
+                  </a>
                 </div>
             </li>
             <!-- ============================================================== -->
@@ -238,7 +248,7 @@
       <div class="page-breadcrumb">
         <div class="row">
           <div class="col-5 align-self-center">
-            <h4 class="page-title">고객센터</h4>
+            <h4 class="page-title">유저 관리</h4>
           </div>
           <div class="col-7 align-self-center">
             <div class="d-flex align-items-center justify-content-end">
@@ -248,7 +258,7 @@
                     <a href="#">홈</a>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
-                    고객센터
+                    유저 관리
                   </li>
                 </ol>
               </nav>
@@ -279,160 +289,55 @@
             <div class="card">
               <div class="card-body">
                 <h4 class="card-title"></h4>
-                
-                <div class="filter-box">
-                  <label class="radio-wrap">
-                    <input type="radio" name="status" value="all" checked>
-                    <span>전체</span>
-                  </label>
-
-                  <label class="radio-wrap">
-                    <input type="radio" name="status" value="pending">
-                    <span>미답변</span>
-                  </label>
-
-                  <label class="radio-wrap">
-                    <input type="radio" name="status" value="done">
-                    <span>답변완료</span>
-                  </label>
-                  <select class="sort-select">
-                  <option>날짜 오름차순</option>
-                  <option>날짜 내림차순</option>
-                </select>
-                </div>
               </div>
               <div class="comment-widgets" style="height: 600px">
                 <div class="table-responsive">
                   <table class="table table-hover">
                     <thead>
                       <tr>
-                        <th class="border-top-0">제목</th>
                         <th class="border-top-0">이름</th>
-                        <th class="border-top-0">날짜</th>
-                        <th class="border-top-0">상태</th>
+                        <th class="border-top-0">아이디</th>
+                        <th class="border-top-0">주행 기록</th>
+                        <th class="border-top-0">안전 등급</th>
+                        <th class="border-top-0">마지막 접속일</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td><span class="font-medium">문의 1</span></td>
-                        <td class="txt-oflo">이름 1</td>
-                        <td class="txt-oflo">2026.01.12</td>
-                        <td>
-                          <span class="label label-success label-rounded">답변 완료</span>
-                        </td>
+                      <tr onclick="location.href='user-detail.jsp'">
+                        <td><span class="font-medium">이름</span></td>
+                        <td class="txt-oflo">아이디</td>
+                        <td class="txt-oflo">2km</td>
+                        <td class="txt-oflo">2</td>
+                        <td class="txt-oflo">2026.01.15</td>
                       </tr>
                       <tr>
-                        <td><span class="font-medium">문의 2</span></td>
-                        <td class="txt-oflo">이름 2</td>
-                        <td class="txt-oflo">2026.01.06</td>
-                        <td>
-                          <span class="label label-success label-rounded">답변 완료</span>
-                        </td>
+                        <td><span class="font-medium">이름</span></td>
+                        <td class="txt-oflo">아이디</td>
+                        <td class="txt-oflo">2.1km</td>
+                        <td class="txt-oflo">3</td>
+                        <td class="txt-oflo">2026.01.10</td>
                       </tr>
                       <tr>
-                        <td><span class="font-medium">문의 3</span></td>
-                        <td class="txt-oflo">이름 3</td>
+                        <td><span class="font-medium">이름</span></td>
+                        <td class="txt-oflo">아이디</td>
+                        <td class="txt-oflo">1.2km</td>
+                        <td class="txt-oflo">1</td>
                         <td class="txt-oflo">2026.01.03</td>
-                        <td>
-                          <span class="label label-danger label-rounded">미답변</span>
-                        </td>
                       </tr>
                       <tr>
-                        <td><span class="font-medium">문의 4</span></td>
-                        <td class="txt-oflo">이름 4</td>
+                        <td><span class="font-medium">이름</span></td>
+                        <td class="txt-oflo">아이디</td>
+                        <td class="txt-oflo">5.1km</td>
+                        <td class="txt-oflo">2</td>
                         <td class="txt-oflo">2025.12.31</td>
-                        <td>
-                          <span class="label label-success label-rounded">답변 완료</span>
-                        </td>
                       </tr>
                       <tr>
-                        <td><span class="font-medium">문의 5</span></td>
-                        <td class="txt-oflo">이름 5</td>
-                        <td class="txt-oflo">2025.12.22</td>
-                        <td>
-                          <span class="label label-danger label-rounded">미답변</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 6</span></td>
-                        <td class="txt-oflo">이름 6</td>
-                        <td class="txt-oflo">2025.12.11</td>
-                        <td>
-                          <span class="label label-danger label-rounded">미답변</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 7</span></td>
-                        <td class="txt-oflo">이름 7</td>
-                        <td class="txt-oflo">2025.11.29</td>
-                        <td>
-                          <span class="label label-success label-rounded">답변 완료</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 8</span></td>
-                        <td class="txt-oflo">이름 8</td>
-                        <td class="txt-oflo">2025.11.26</td>
-                        <td>
-                          <span class="label label-danger label-rounded">미답변</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 9</span></td>
-                        <td class="txt-oflo">이름 9</td>
-                        <td class="txt-oflo">2025.11.17</td>
-                        <td>
-                          <span class="label label-danger label-rounded">미답변</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 10</span></td>
-                        <td class="txt-oflo">이름 10</td>
-                        <td class="txt-oflo">2025.11.11</td>
-                        <td>
-                          <span class="label label-success label-rounded">답변 완료</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 11</span></td>
-                        <td class="txt-oflo">이름 11</td>
-                        <td class="txt-oflo">2025.11.08</td>
-                        <td>
-                          <span class="label label-success label-rounded">답변 완료</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 12</span></td>
-                        <td class="txt-oflo">이름 12</td>
-                        <td class="txt-oflo">2025.11.02</td>
-                        <td>
-                          <span class="label label-success label-rounded">답변 완료</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 13</span></td>
-                        <td class="txt-oflo">이름 13</td>
-                        <td class="txt-oflo">2025.10.30</td>
-                        <td>
-                          <span class="label label-danger label-rounded">미답변</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 14</span></td>
-                        <td class="txt-oflo">이름 14</td>
-                        <td class="txt-oflo">2025.10.27</td>
-                        <td>
-                          <span class="label label-success label-rounded">답변 완료</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span class="font-medium">문의 15</span></td>
-                        <td class="txt-oflo">이름 15</td>
-                        <td class="txt-oflo">2025.10.21</td>
-                        <td>
-                          <span class="label label-danger label-rounded">미답변</span>
-                        </td>
-                      </tr>
+                        <td><span class="font-medium">이름</span></td>
+                        <td class="txt-oflo">아이디</td>
+                        <td class="txt-oflo">2.32km</td>
+                        <td class="txt-oflo">3</td>
+                        <td class="txt-oflo">2025.12.24</td>
+                      </tr>                      
                     </tbody>
                   </table>
                 </div>
