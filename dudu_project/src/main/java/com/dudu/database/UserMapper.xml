@@ -5,55 +5,81 @@
 
 <mapper namespace="com.dudu.database.UserMapper">
 
-    <!-- ===================== -->
-    <!-- 회원가입 -->
-    <!-- ===================== -->
-    <insert id="join" parameterType="com.dudu.model.User">
-        INSERT INTO TB_USER
-        (
-            USER_ID,
-            USER_PW,
-            USER_NM,
-            USER_TEL,
-            LAST_DT,
-            JOIN_DT,
-            SAFETY_SCORE,
-            SAFETY_GR,
-            BLACK_YN
-        )
-        VALUES
-        (
-            #{USER_ID},
-            #{USER_PW},
-            #{USER_NM},
-            #{USER_TEL},
-            NULL,
-            SYSDATE,
-            100,
-            1,
-            'N'
-        )
-    </insert>
+	<!-- ===================== -->
+	<!-- 회원가입 -->
+	<!-- ===================== -->
+	<insert id="join" parameterType="com.dudu.model.User">
+		INSERT INTO TB_USER
+		(
+		USER_ID,
+		USER_PW,
+		USER_NM,
+		USER_TEL,
+		LAST_DT,
+		JOIN_DT,
+		SAFETY_SCORE,
+		SAFETY_GR,
+		BLACK_YN
+		)
+		VALUES
+		(
+		#{USER_ID},
+		#{USER_PW},
+		#{USER_NM},
+		#{USER_TEL},
+		NULL,
+		SYSDATE,
+		100,
+		1,
+		'N'
+		)
+	</insert>
 
-    <!-- ===================== -->
-    <!-- 로그인 -->
-    <!-- ===================== -->
-    <select id="login"
-            parameterType="com.dudu.model.User"
-            resultType="com.dudu.model.User">
-        SELECT
-            USER_ID,
-            USER_PW,
-            USER_NM,
-            USER_TEL,
-            LAST_DT,
-            JOIN_DT,
-            SAFETY_SCORE,
-            SAFETY_GR,
-            BLACK_YN
-        FROM TB_USER
-        WHERE TRIM(USER_ID) = TRIM(#{USER_ID})
-          AND TRIM(USER_PW) = TRIM(#{USER_PW})
-    </select>
+	<!-- ===================== -->
+	<!-- 로그인 -->
+	<!-- ===================== -->
+	<select id="login" parameterType="com.dudu.model.User"
+		resultType="com.dudu.model.User">
+		SELECT
+		USER_ID,
+		USER_PW,
+		USER_NM,
+		USER_TEL,
+		LAST_DT,
+		JOIN_DT,
+		SAFETY_SCORE,
+		SAFETY_GR,
+		BLACK_YN
+		FROM TB_USER
+		WHERE TRIM(USER_ID) = TRIM(#{USER_ID})
+		AND TRIM(USER_PW) = TRIM(#{USER_PW})
+	</select>
+
+	<!-- ===================== -->
+	<!-- 회원정보 조회 (ID 기준) -->
+	<!-- ===================== -->
+	<select id="selectById" parameterType="String"
+		resultType="com.dudu.model.User">
+		SELECT
+		USER_ID,
+		USER_NM,
+		USER_TEL,
+		JOIN_DT,
+		LAST_DT,
+		SAFETY_SCORE,
+		SAFETY_GR,
+		BLACK_YN
+		FROM TB_USER
+		WHERE USER_ID = #{userId}
+	</select>
+
+	<update id="updateUser" parameterType="com.dudu.model.User">
+		UPDATE TB_USER
+		SET
+		USER_NM = #{USER_NM},
+		USER_TEL = #{USER_TEL}
+		WHERE USER_ID = #{USER_ID}
+	</update>
 
 </mapper>
+
