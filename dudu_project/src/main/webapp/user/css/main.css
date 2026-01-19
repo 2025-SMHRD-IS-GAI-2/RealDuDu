@@ -1,0 +1,112 @@
+#box{
+    margin: auto;
+    height: 1080px;
+}
+header{
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    width: 500px;
+    height: 50px;
+    background-color: whitesmoke;
+    
+}
+.logo{
+    width: 50px;
+    height: 50px;
+}
+.menu{
+    width: 50px;
+    height: 50px;
+}
+
+#main{
+    margin: auto;
+    display: flex;
+    width: 500px;
+    height: 500px;
+    background-color: lightblue;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+.login-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  background: #fff;
+  border: 1px solid #eee;
+  width: 300px;
+  height: 100px;
+  margin-top: 70px;
+}
+
+.text-box {
+  margin-left: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #000;
+  text-decoration: none;   /* 밑줄 제거 */
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  margin-left: 25px;
+}
+
+.actions a {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+  text-decoration: none;
+}
+
+.text-box a:hover {
+  text-decoration: underline;
+}
+
+.pfl{
+    width: 70px;
+    height: 70px;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+#button-con{
+    gap: 5px;
+    display: flex;
+}
+
+.button{
+    width: 150px;
+    height: 150px; 
+}
+
+.button,
+.button2 {
+  display: block;
+}
+
+
+#button-con2{
+    gap: 5px;
+    display: flex;
+}
+
+.button2{
+    width: 305px;
+}

@@ -1,0 +1,98 @@
+body {
+    font-family: 'Pretendard', sans-serif; /* 깔끔한 폰트 권장 */
+    display: flex;
+    justify-content: center;
+    padding: 50px 0;
+}
+
+.signup-container {
+    width: 100%;
+    max-width: 450px; /* 적절한 너비 설정 */
+}
+
+h1 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.sub-text {
+    font-weight: normal;
+    font-size: 12px;
+    color: #666;
+}
+
+/* 입력창 기본 스타일 */
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* 패딩 포함 너비 계산 */
+    font-size: 14px;
+}
+
+/* 아이디 옆에 버튼이 있는 경우 */
+.with-button {
+    display: flex;
+    gap: 10px;
+}
+
+.check-btn {
+    white-space: nowrap;
+    background: white;
+    border: 1px solid #333;
+    padding: 0 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* 면허증 점선 영역 */
+.file-upload {
+    width: 100%;
+    height: 100px;
+    border: 1px dashed #999;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.plus-icon {
+    font-size: 30px;
+    color: #999;
+    border: 2px solid #999;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 하단 검정 가입 버튼 */
+.submit-btn {
+    width: 100%;
+    background-color: blue;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+}

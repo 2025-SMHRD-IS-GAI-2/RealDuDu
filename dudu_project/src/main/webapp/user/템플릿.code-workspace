@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../WebStudy/템플릿"
+		},
+		{
+			"path": "../../Downloads/project/project"
+		},
+		{
+			"path": "../../Downloads/html5up-massively"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "pjt"
+	}
+}
