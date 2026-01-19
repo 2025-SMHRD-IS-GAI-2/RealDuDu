@@ -35,26 +35,12 @@
             <i class="ti-menu ti-close"></i>
           </a>
           <div class="navbar-brand">
-<<<<<<< Updated upstream
-            <a href="index.jsp" class="logo">
-              <!-- Logo icon -->
-              <b class="logo-icon">
-                <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                <!-- Light Logo icon -->
-                <img src="assets/images/logo2.jpg" alt="homepage" class="light-logo" />
-=======
             <a href="main.jsp" class="logo">
               <b class="logo-icon">
                 <img src="assets/images/DuDu_LOGO.jpg" alt="homepage" class="light-logo" />
->>>>>>> Stashed changes
               </b>
               <span class="logo-text">
-<<<<<<< Updated upstream
-                <!-- Light Logo text -->
-                <img src="assets/images/logo.png" class="light-logo" alt="homepage" />
-=======
                 <img src="assets/images/DuDu_LOGOtext.png" class="light-logo" alt="homepage" />
->>>>>>> Stashed changes
               </span>
             </a>
           </div>
@@ -75,27 +61,13 @@
               </form>
             </li>
           </ul>
-<<<<<<< Updated upstream
-          <!-- ============================================================== -->
-          <!-- Right side toggle and nav items -->
-          <!-- ============================================================== -->
-        </div>
-        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-          <ul class="navbar-nav float-start me-auto"></ul>
-=======
-          
->>>>>>> Stashed changes
           <ul class="navbar-nav float-end">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
                 <img src="assets/images/Ellipse 2.png" class="rounded-circle" style="width:30px;height:30px;">
-<<<<<<< Updated upstream
-
-=======
               </a>
->>>>>>> Stashed changes
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="profile.jsp">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> 내 정보
@@ -160,8 +132,6 @@
             </li>
             
             <li class="sidebar-item">
-<<<<<<< Updated upstream
-=======
               <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                 <i class="mdi mdi-scooter"></i>
                 <span class="hide-menu">킥보드 관리</span>
@@ -217,22 +187,12 @@
             </li>
             
             <li class="sidebar-item">
->>>>>>> Stashed changes
               <a class="sidebar-link waves-effect waves-dark sidebar-link" href="device-status.jsp" aria-expanded="false">
                 <i class="mdi mdi-account-network"></i>
                 <span class="hide-menu">기기현황</span>
               </a>
             </li>
             <li class="sidebar-item">
-<<<<<<< Updated upstream
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="service-center.jsp" aria-expanded="false">
-                <i class="mdi mdi-arrange-bring-forward"></i>
-                <span class="hide-menu">고객센터</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-=======
->>>>>>> Stashed changes
               <a class="sidebar-link waves-effect waves-dark sidebar-link" href="data-management.jsp" aria-expanded="false">
                 <i class="mdi mdi-border-none"></i>
                 <span class="hide-menu">데이터 관리</span>
@@ -257,11 +217,7 @@
       <div class="page-breadcrumb">
         <div class="row">
           <div class="col-5 align-self-center">
-<<<<<<< Updated upstream
-            <h4 class="page-title"></h4>
-=======
             <h4 class="page-title">비밀번호 변경</h4>
->>>>>>> Stashed changes
           </div>
           <div class="col-7 align-self-center">
             <div class="d-flex align-items-center justify-content-end">

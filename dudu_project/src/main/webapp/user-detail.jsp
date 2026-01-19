@@ -1,9 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<<<<<<< Updated upstream
-<!DOCTYPE html>
-<html dir="ltr" lang="en">
-=======
 <%@ page import="java.util.*" %>
 <%
     // ==========================================================================
@@ -67,36 +63,10 @@
 
 <!DOCTYPE html>
 <html dir="ltr" lang="ko">
->>>>>>> Stashed changes
 
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<<<<<<< Updated upstream
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="keywords"
-    content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, Nice lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, Nice admin lite design, Nice admin lite dashboard bootstrap 5 dashboard template" />
-  <meta name="description"
-    content="Nice Admin Lite is powerful and clean admin dashboard template, inpired from Bootstrap Framework" />
-  <meta name="robots" content="noindex,nofollow" />
-  <title>Nice Admin Lite Template by WrapPixel</title>
-  <link rel="canonical" href="https://www.wrappixel.com/templates/niceadmin-lite/" />
-  <!-- Favicon icon -->
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png" />
-  <!-- Custom CSS -->
-  <link href="assets/libs/chartist/dist/chartist.min.css" rel="stylesheet" />
-  <!-- Custom CSS -->
-  <link href="css/style.min.css" rel="stylesheet" />
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    <style>
-=======
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>유저 상세 정보 - 두두 DuDu</title>
   <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png" />
@@ -104,52 +74,20 @@
   <link href="css/style.min.css" rel="stylesheet" />
   
   <style>
->>>>>>> Stashed changes
        * {
       box-sizing: border-box;
       font-family: "Pretendard", Arial, sans-serif;
     }
-
-<<<<<<< Updated upstream
-    body {
-      margin: 0;
-      background: #f4f6f8;
-    }
-
-    /* ===== 전체 ===== */
-    .container {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 0 20px;
-=======
     /* 컨테이너 스타일 보정 */
     .detail-container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
->>>>>>> Stashed changes
     }
-
     .page-title {
       font-size: 22px;
       font-weight: 600;
       margin-bottom: 20px;
-<<<<<<< Updated upstream
-    }
-
-    /* ===== 카드 ===== */
-    .card {
-      background: #fff;
-      border-radius: 6px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 15px;
-=======
       color: #3e5569;
     }
 
@@ -168,7 +106,6 @@
       margin-bottom: 20px;
       border-bottom: 1px solid #eee;
       padding-bottom: 10px;
->>>>>>> Stashed changes
     }
 
     /* ===== 상단 영역 ===== */
@@ -178,11 +115,7 @@
     }
 
     .profile-card {
-<<<<<<< Updated upstream
-      flex: 2;
-=======
       flex: 1;
->>>>>>> Stashed changes
       display: flex;
       gap: 20px;
       align-items: center;
@@ -193,12 +126,6 @@
       height: 80px;
       background: #e0e0e0;
       border-radius: 50%;
-<<<<<<< Updated upstream
-    }
-
-    .profile-info p {
-      margin: 6px 0;
-=======
       display: flex;
       align-items: center;
       justify-content: center;
@@ -209,65 +136,10 @@
 
     .profile-info p {
       margin: 8px 0;
->>>>>>> Stashed changes
       font-size: 14px;
       color: #333;
     }
 
-<<<<<<< Updated upstream
-    .checkbox-group {
-      margin-top: 10px;
-    }
-
-    .checkbox-group label {
-      margin-right: 15px;
-      font-size: 13px;
-    }
-
-    /* ===== 활동 정보 ===== */
-    .activity-card {
-      flex: 1;
-      font-size: 13px;
-    }
-
-    .activity-card p {
-      margin: 6px 0;
-      color: #555;
-    }
-
-    /* ===== 포인트 ===== */
-    .point-form {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-    }
-
-    .point-form select,
-    .point-form input {
-      padding: 6px;
-      font-size: 13px;
-    }
-
-    .point-form button {
-      background: #1e88e5;
-      color: #fff;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    /* ===== 테이블 ===== */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    th, td {
-      padding: 10px;
-=======
     /* ===== 활동 정보 ===== */
     .activity-card {
       flex: 1;
@@ -288,37 +160,23 @@
 
     .custom-table th, .custom-table td {
       padding: 12px;
->>>>>>> Stashed changes
       border-bottom: 1px solid #e0e0e0;
       text-align: left;
     }
 
-<<<<<<< Updated upstream
-    th {
-=======
     .custom-table th {
->>>>>>> Stashed changes
       background: #f9fafb;
       font-weight: 600;
     }
 
     .text-plus {
-<<<<<<< Updated upstream
-      color: #1e88e5;
-      font-weight: 500;
-=======
       color: #2962FF;
       font-weight: 600;
->>>>>>> Stashed changes
     }
 
     .text-minus {
       color: #e53935;
-<<<<<<< Updated upstream
-      font-weight: 500;
-=======
       font-weight: 600;
->>>>>>> Stashed changes
     }
 
     /* ===== 반응형 ===== */
@@ -327,81 +185,17 @@
         flex-direction: column;
       }
     }
-<<<<<<< Updated upstream
-    </style>
-</head>
 
-<body>
-  <!-- ============================================================== -->
-  <!-- Preloader - style you can find in spinners.css -->
-  <!-- ============================================================== -->
-=======
   </style>
 </head>
 
 <body>
->>>>>>> Stashed changes
   <div class="preloader">
     <div class="lds-ripple">
       <div class="lds-pos"></div>
       <div class="lds-pos"></div>
     </div>
   </div>
-<<<<<<< Updated upstream
-  <!-- ============================================================== -->
-  <!-- Main wrapper - style you can find in pages.scss -->
-  <!-- ============================================================== -->
-  <div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full"
-    data-boxed-layout="full">
-    <!-- ============================================================== -->
-    <!-- Topbar header - style you can find in pages.scss -->
-    <!-- ============================================================== -->
-    <header class="topbar" data-navbarbg="skin6">
-      <nav class="navbar top-navbar navbar-expand-md navbar-light">
-        <div class="navbar-header" data-logobg="skin5">
-          <!-- This is for the sidebar toggle which is visible on mobile only -->
-          <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
-            <i class="ti-menu ti-close"></i>
-          </a>
-          <!-- ============================================================== -->
-          <!-- Logo -->
-          <!-- ============================================================== -->
-          <div class="navbar-brand">
-            <a href="index.jsp" class="logo">
-              <!-- Logo icon -->
-              <b class="logo-icon">
-                <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                <!-- Light Logo icon -->
-                <img src="assets/images/logo2.jpg" alt="homepage" class="light-logo" />
-              </b>
-              <!--End Logo icon -->
-              <!-- Logo text -->
-              <span class="logo-text">
-                <!-- Light Logo text -->
-                <img src="assets/images/logo.png" class="light-logo" alt="homepage" />
-              </span>
-            </a>
-          </div>
-          <!-- ============================================================== -->
-          <!-- End Logo -->
-          <!-- ============================================================== -->
-          <!-- ============================================================== -->
-          <!-- Toggle which is visible on mobile only -->
-          <!-- ============================================================== -->
-        </div>
-        <!-- ============================================================== -->
-        <!-- End Logo -->
-        <!-- ============================================================== -->
-        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-          <!-- ============================================================== -->
-          <!-- toggle and nav items -->
-          <!-- ============================================================== -->
-          <ul class="navbar-nav float-start me-auto">
-            <!-- ============================================================== -->
-            <!-- Search -->
-            <!-- ============================================================== -->
-=======
-
   <div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full"
     data-boxed-layout="full">
     
@@ -420,74 +214,24 @@
         </div>
         <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
           <ul class="navbar-nav float-start me-auto">
->>>>>>> Stashed changes
             <li class="nav-item search-box">
               <a class="nav-link waves-effect waves-dark" href="javascript:void(0)">
                 <div class="d-flex align-items-center">
                   <i class="mdi mdi-magnify font-20 me-1"></i>
-<<<<<<< Updated upstream
-                  <div class="ms-1 d-none d-sm-block">
-                    <span>Search</span>
-                  </div>
-=======
                   <div class="ms-1 d-none d-sm-block"><span>Search</span></div>
->>>>>>> Stashed changes
                 </div>
               </a>
               <form class="app-search position-absolute">
                 <input type="text" class="form-control" placeholder="Search &amp; enter" />
-<<<<<<< Updated upstream
-                <a class="srh-btn">
-                  <i class="mdi mdi mdi-close"></i>
-                </a>
-              </form>
-            </li>
-          </ul>
-          <!-- ============================================================== -->
-          <!-- Right side toggle and nav items -->
-          <!-- ============================================================== -->
-        </div>
-        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-          <ul class="navbar-nav float-start me-auto"></ul>
-=======
                 <a class="srh-btn"><i class="mdi mdi mdi-close"></i></a>
               </form>
             </li>
           </ul>
->>>>>>> Stashed changes
           <ul class="navbar-nav float-end">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-<<<<<<< Updated upstream
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                <img src="assets/images/Ellipse 2.png" class="rounded-circle" style="width:30px;height:30px;">
 
-                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-
-                  <a class="dropdown-item" href="profile.jsp">
-                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                    내 정보
-                  </a>
-
-                  <a class="dropdown-item" href="change-password.jsp">
-                    <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
-                    비밀번호 변경
-                  </a>
-
-                  <div class="dropdown-divider"></div>
-
-                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    로그아웃
-                  </a>
-                </div>
-            </li>
-            <!-- ============================================================== -->
-            <!-- User profile and search -->
-            <!-- ============================================================== -->
-          </ul>
-=======
                 <img src="assets/images/Ellipse 2.png" class="rounded-circle" style="width:30px;height:30px;">
               </a>
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -497,79 +241,10 @@
                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> 로그아웃</a>
               </div>
             </li>
->>>>>>> Stashed changes
           </ul>
         </div>
       </nav>
     </header>
-<<<<<<< Updated upstream
-    <!-- ============================================================== -->
-    <!-- End Topbar header -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <aside class="left-sidebar" data-sidebarbg="skin5">
-      <!-- Sidebar scroll-->
-      <div class="scroll-sidebar">
-        <!-- Sidebar navigation-->
-        <nav class="sidebar-nav">
-          <ul id="sidebarnav">
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="main.jsp" aria-expanded="false">
-                <i class="mdi mdi-av-timer"></i>
-                <span class="hide-menu">메인</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="device-status.jsp"
-                aria-expanded="false">
-                <i class="mdi mdi-account-network"></i>
-                <span class="hide-menu">기기현황</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="service-center.jsp"
-                aria-expanded="false">
-                <i class="mdi mdi-arrange-bring-forward"></i>
-                <span class="hide-menu">고객센터</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="data-management.jsp"
-                aria-expanded="false">
-                <i class="mdi mdi-border-none"></i>
-                <span class="hide-menu">데이터 관리</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="user-status.jsp"
-                aria-expanded="false">
-                <i class="mdi mdi-face"></i>
-                <span class="hide-menu">유저 관리</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <!-- End Sidebar navigation -->
-      </div>
-      <!-- End Sidebar scroll-->
-    </aside>
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
-    <div class="page-wrapper">
-      <!-- ============================================================== -->
-      <!-- Bread crumb and right sidebar toggle -->
-      <!-- ============================================================== -->
-      <div class="page-breadcrumb">
-        <div class="row">
-          <div class="col-5 align-self-center">
-            <h4 class="page-title"></h4>
-=======
 
     <aside class="left-sidebar" data-sidebarbg="skin5">
       <div class="scroll-sidebar">
@@ -638,127 +313,21 @@
         <div class="row">
           <div class="col-5 align-self-center">
             <h4 class="page-title">유저 정보</h4>
->>>>>>> Stashed changes
           </div>
           <div class="col-7 align-self-center">
             <div class="d-flex align-items-center justify-content-end">
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-<<<<<<< Updated upstream
-                  <li class="breadcrumb-item">
-                    <a href="#">홈</a>
-                  </li>
-                  <li class="breadcrumb-item active" aria-current="page">
-                   유저 정보
-                  </li>
-=======
                   <li class="breadcrumb-item"><a href="main.jsp">홈</a></li>
                   <li class="breadcrumb-item"><a href="user-status.jsp">유저 관리</a></li>
                   <li class="breadcrumb-item active" aria-current="page">상세 정보</li>
->>>>>>> Stashed changes
                 </ol>
               </nav>
             </div>
           </div>
         </div>
       </div>
-<<<<<<< Updated upstream
-      <!-- ============================================================== -->
-      <!-- End Bread crumb and right sidebar toggle -->
-      <!-- ============================================================== -->
-      <!-- ============================================================== -->
-      <!-- Container fluid  -->
-      <!-- ============================================================== -->
-      <div class="container">
 
-  <div class="page-title">유저 상세 정보</div>
-
-  <!-- 상단 -->
-  <div class="top-section">
-
-    <!-- 회원 정보 -->
-    <div class="card profile-card">
-      <div class="avatar"></div>
-      <div class="profile-info">
-        <div class="card-title">유저 정보</div>
-        <p><strong>이름:</strong> 이름</p>
-        <p><strong>이메일:</strong> t*******@naver.com</p>
-      </div>
-    </div>
-
-    <!-- 활동 정보 -->
-    <div class="card activity-card">
-      <div class="card-title">유저 상세 정보</div>
-      <p>아이디: 아이디</p>
-      <p>안전 등급: 2</p>
-      <p>안전 점수: 80</p>
-      <p>가입일: 2026-01-13</p>
-      <p>최근 로그인: 2026-01-15</p>
-    </div>
-
-  </div>
-
-  <!-- 포인트 -->
-  <div class="card">
-    <div class="card-title">주행 기록</div>
-
-    <div class="point-form">
-      <select>
-        <option>오름차순</option>
-        <option>내림차순</option>
-      </select>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>일자</th>
-          <th>거리</th>
-          <th>안전 점수</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>2026-01-15</td>
-          <td>1km</td>
-          <td class="text-plus">+13</td>
-        </tr>
-        <tr>
-          <td>2026-01-07</td>
-          <td>1km</td>
-          <td class="text-minus">+5</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
-  <!-- ============================================================== -->
-  <!-- All Jquery -->
-  <!-- ============================================================== -->
-  <script src="assets/libs/jquery/dist/jquery.min.js"></script>
-  <!-- Bootstrap tether Core JavaScript -->
-  <script src="assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- slimscrollbar scrollbar JavaScript -->
-  <script src="assets/extra-libs/sparkline/sparkline.js"></script>
-  <!--Wave Effects -->
-  <script src="js/waves.js"></script>
-  <!--Menu sidebar -->
-  <script src="js/sidebarmenu.js"></script>
-  <!--Custom JavaScript -->
-  <script src="js/custom.min.js"></script>
-  <!--This page JavaScript -->
-  <!--chartis chart-->
-  <script src="assets/libs/chartist/dist/chartist.min.js"></script>
-  <script src="assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
-  <script src="js/pages/dashboards/dashboard1.js"></script>
-
-
-
-
-</body>
-
-=======
 
       <div class="container-fluid detail-container">
         
@@ -940,5 +509,4 @@
   </script>
 
 </body>
->>>>>>> Stashed changes
 </html>

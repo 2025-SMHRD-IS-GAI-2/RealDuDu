@@ -31,11 +31,7 @@
     .filter-box {
       background: #f8f9fa;
       border-radius: 5px;
-<<<<<<< Updated upstream
-      padding: 15px;
-=======
       padding: 15px;  
->>>>>>> Stashed changes
       margin-bottom: 20px;
     }
   </style>
@@ -70,30 +66,18 @@
           <!-- Logo -->
           <!-- ============================================================== -->
           <div class="navbar-brand">
-<<<<<<< Updated upstream
-            <a href="index.jsp" class="logo">
-=======
             <a href="main.jsp" class="logo">
->>>>>>> Stashed changes
               <!-- Logo icon -->
               <b class="logo-icon">
                 <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                 <!-- Light Logo icon -->
-<<<<<<< Updated upstream
-                <img src="assets/images/logo2.jpg" alt="homepage" class="light-logo" />
-=======
                 <img src="assets/images/DuDu_LOGO.jpg" alt="homepage" class="light-logo" />
->>>>>>> Stashed changes
               </b>
               <!--End Logo icon -->
               <!-- Logo text -->
               <span class="logo-text">
                 <!-- Light Logo text -->
-<<<<<<< Updated upstream
-                <img src="assets/images/logo.png" class="light-logo" alt="homepage" />
-=======
                 <img src="assets/images/DuDu_LOGOtext.png" class="light-logo" alt="homepage" />
->>>>>>> Stashed changes
               </span>
             </a>
           </div>
@@ -187,130 +171,7 @@
     <!-- ============================================================== -->
     <!-- Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
-<<<<<<< Updated upstream
-    <aside class="left-sidebar" data-sidebarbg="skin5">
-      <!-- Sidebar scroll-->
-      <div class="scroll-sidebar">
-        <!-- Sidebar navigation-->
-        <nav class="sidebar-nav">
-          <ul id="sidebarnav">
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="main.jsp" aria-expanded="false">
-                <i class="mdi mdi-av-timer"></i>
-                <span class="hide-menu">메인</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="device-status.jsp"
-                aria-expanded="false">
-                <i class="mdi mdi-account-network"></i>
-                <span class="hide-menu">기기현황</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="service-center.jsp"
-                aria-expanded="false">
-                <i class="mdi mdi-arrange-bring-forward"></i>
-                <span class="hide-menu">고객센터</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="data-management.jsp"
-                aria-expanded="false">
-                <i class="mdi mdi-border-none"></i>
-                <span class="hide-menu">데이터 관리</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="user-status.jsp"
-                aria-expanded="false">
-                <i class="mdi mdi-face"></i>
-                <span class="hide-menu">유저 관리</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <!-- End Sidebar navigation -->
-      </div>
-      <!-- End Sidebar scroll-->
-    </aside>
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
-    <div class="page-wrapper">
-      <!-- ============================================================== -->
-      <!-- Bread crumb and right sidebar toggle -->
-      <!-- ============================================================== -->
-      <div class="page-breadcrumb">
-        <div class="row">
-          <div class="col-5 align-self-center">
-            <h4 class="page-title"></h4>
-          </div>
-          <div class="col-7 align-self-center">
-            <div class="d-flex align-items-center justify-content-end">
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item">
-                    <a href="#">홈</a>
-                  </li>
-                  <li class="breadcrumb-item active" aria-current="page">
-                    대쉬보드
-                  </li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ============================================================== -->
-      <!-- End Bread crumb and right sidebar toggle -->
-      <!-- ============================================================== -->
-      <!-- ============================================================== -->
-      <!-- Container fluid  -->
-      <!-- ============================================================== -->
-      <div class="container-fluid">
-        <!-- ============================================================== -->
-        <!-- Email campaign chart -->
-        <!-- ============================================================== -->
-        <div class="row">
-          <div class="col-12">
-            <div class="card filter-box">
-              <div class="d-flex align-items-center flex-wrap gap-2">
-                <h5 class="mb-0 me-3 fw-bold"><i class="mdi mdi-calendar-clock"></i> 기간 설정:</h5>
-                <input type="date" class="form-control w-auto" value="2026-01-01">
-                <span class="mx-1">~</span>
-                <input type="date" class="form-control w-auto" value="2026-01-13">
-                <button class="btn btn-primary text-white ms-2">조회하기</button>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="col-lg-8">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">월별 안전지수 / 헬멧 미착용 발생 건수</h4>
-                <div class="sales ct-charts mt-3"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title mb-1">월간 경고 횟수</h5>
-                <h3 class="font-light">Top 5</h3>
-                <div class="mt-3 text-center">
-                  <div id="earnings"></div>
-                </div>
-              </div>
-            </div>
-
-=======
    <aside class="left-sidebar" data-sidebarbg="skin5">
   <div class="scroll-sidebar">
     <nav class="sidebar-nav">
@@ -523,7 +384,6 @@
               </div>
             </div>
 
->>>>>>> Stashed changes
             <div class="card">
               <div class="card-body">
                 <h4 class="card-title mb-0">사용자</h4>
@@ -571,11 +431,7 @@
                     </tr>
                   </thead>
                   <tbody>
-<<<<<<< Updated upstream
-                    <tr>
-=======
                     <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user001'">
->>>>>>> Stashed changes
                       <td class="txt-oflo">Elite admin</td>
                       <td>
                         <span class="label label-warning label-rounded">주의</span>
@@ -583,11 +439,7 @@
                       <td class="txt-oflo">2026.01.02</td>
                       <td><span class="font-medium">54</span></td>
                     </tr>
-<<<<<<< Updated upstream
-                    <tr>
-=======
                     <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user002'">
->>>>>>> Stashed changes
                       <td class="txt-oflo">Real Homes WP Theme</td>
                       <td>
                         <span class="label label-danger label-rounded">미착용</span>
@@ -595,11 +447,7 @@
                       <td class="txt-oflo">2026.01.10</td>
                       <td><span class="font-medium">85</span></td>
                     </tr>
-<<<<<<< Updated upstream
-                    <tr>
-=======
                     <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user003'">
->>>>>>> Stashed changes
                       <td class="txt-oflo">Ample Admin</td>
                       <td>
                         <span class="label label-success label-rounded">안전</span>
@@ -607,11 +455,7 @@
                       <td class="txt-oflo">2026.01.13</td>
                       <td><span class="font-medium">46</span></td>
                     </tr>
-<<<<<<< Updated upstream
-                    <tr>
-=======
                     <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user004'">
->>>>>>> Stashed changes
                       <td class="txt-oflo">Medical Pro WP Theme</td>
                       <td>
                         <span class="label label-success label-rounded">안전</span>
@@ -619,11 +463,7 @@
                       <td class="txt-oflo">2026.01.01</td>
                       <td><span class="font-medium">71</span></td>
                     </tr>
-<<<<<<< Updated upstream
-                    <tr>
-=======
                     <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user005'">
->>>>>>> Stashed changes
                       <td class="txt-oflo">Hosting press html</td>
                       <td>
                         <span class="label label-success label-rounded">안전</span>
@@ -631,11 +471,7 @@
                       <td class="txt-oflo">2025.12.13</td>
                       <td><span class="font-medium">63</span></td>
                     </tr>
-<<<<<<< Updated upstream
-                    <tr>
-=======
                     <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user006'">
->>>>>>> Stashed changes
                       <td class="txt-oflo">Digital Agency PSD</td>
                       <td>
                         <span class="label label-danger label-rounded">Tax</span>
@@ -739,8 +575,6 @@
   <script src="assets/libs/chartist/dist/chartist.min.js"></script>
   <script src="assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
   <script src="js/pages/dashboards/dashboard1.js"></script>
-<<<<<<< Updated upstream
-=======
   
   <!-- ============================================================== -->
   <!-- Verification Checklist -->
@@ -791,7 +625,6 @@
        ✅ Cards responsive (col-lg-3 col-md-6)
        ✅ Table responsive wrapper intact
   -->
->>>>>>> Stashed changes
 </body>
 
 </html>
