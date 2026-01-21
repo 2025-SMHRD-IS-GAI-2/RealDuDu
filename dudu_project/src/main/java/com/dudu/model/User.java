@@ -16,7 +16,7 @@ public class User {
 
     // ===== 안전 관련 =====
     private int SAFETY_SCORE; // 안전 점수
-    private int SAFETY_GR;    // 안전 등급
+    private String SAFETY_GR;    // 안전 등급
     private String BLACK_YN;  // 블랙 여부
 
     /* =========================
@@ -100,11 +100,11 @@ public class User {
         this.SAFETY_SCORE = SAFETY_SCORE;
     }
 
-    public int getSAFETY_GR() {
+    public String getSAFETY_GR() {
         return SAFETY_GR;
     }
 
-    public void setSAFETY_GR(int SAFETY_GR) {
+    public void setSAFETY_GR(String SAFETY_GR) {
         this.SAFETY_GR = SAFETY_GR;
     }
 

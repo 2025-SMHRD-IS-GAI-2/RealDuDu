@@ -29,8 +29,8 @@
 		#{USER_TEL},
 		NULL,
 		SYSDATE,
-		100,
-		1,
+		50,
+		'GOLD',
 		'N'
 		)
 	</insert>
@@ -79,6 +79,12 @@
 		USER_NM = #{USER_NM},
 		USER_TEL = #{USER_TEL}
 		WHERE USER_ID = #{USER_ID}
+	</update>
+	
+	<update id="updateBlacklist" parameterType="map">
+    UPDATE TB_USER 
+    SET BLACK_YN = #{blackYn} 
+    WHERE USER_ID = #{userId}
 	</update>
 
 </mapper>

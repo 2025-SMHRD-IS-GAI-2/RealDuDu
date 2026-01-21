@@ -40,5 +40,27 @@
         WHERE TRIM(ADMIN_ID) = TRIM(#{adminId})
           AND TRIM(ADMIN_PW) = TRIM(#{adminPw})
     </select>
+	
+	<select id="selectAllMember" resultType="com.dudu.model.User">
+    SELECT * FROM TB_USER
+	</select>
+	
+	<select id="selectInquiryDetail" parameterType="int" resultType="com.dudu.model.Inquiry">
+        SELECT * FROM TB_CS_INQUIRY
+        WHERE CS_NO = #{idx}
+    </select>
+
+	<update id="updateInquiryAnswer" parameterType="map">
+        UPDATE TB_CS_INQUIRY
+        SET ANSWER_CONT = #{answer},
+            PROC_ST = 'R'
+        WHERE CS_NO = #{id}
+    </update>
+
+
 
 </mapper>
+
+
+	
+	
