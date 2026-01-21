@@ -1,295 +1,100 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%
+    request.setCharacterEncoding("UTF-8");
+    String id = request.getParameter("id"); // URL로 넘어온 킥보드 ID
+
+    // DB 연결 변수
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+    String model = "";
+    String status = "";
+    String regDate = "";
+
+    try {
+        String url = "jdbc:oracle:thin:@project-db-campus.smhrd.com:1524:xe";
+        String dbId = "campus_25IS_GA2_p2_4";
+        String dbPw = "smhrd4";
+        
+        Class.forName("oracle.jdbc.driver.OracleDriver");
+        conn = DriverManager.getConnection(url, dbId, dbPw);
+
+        // [SQL] 특정 킥보드 정보 조회
+        String sql = "SELECT MODEL_NM, KICKBOARD_ST, TO_CHAR(REG_DT, 'YYYY-MM-DD') AS R_DT FROM TB_KICKBOARD WHERE KICKBOARD_ID = ?";
+        ps = conn.prepareStatement(sql);
+        ps.setString(1, id);
+        rs = ps.executeQuery();
+
+        if(rs.next()) {
+            model = rs.getString("MODEL_NM");
+            status = rs.getString("KICKBOARD_ST"); // A, M, O 등 코드값
+            regDate = rs.getString("R_DT");
+        }
+    } catch(Exception e) {
+        e.printStackTrace();
+    } finally {
+        if(rs!=null) try{rs.close();}catch(Exception e){}
+        if(ps!=null) try{ps.close();}catch(Exception e){}
+        if(conn!=null) try{conn.close();}catch(Exception e){}
+    }
+%>
 <!DOCTYPE html>
-<html dir="ltr" lang="ko">
-
+<html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="keywords" content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, Nice lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, Nice admin lite design, Nice admin lite dashboard bootstrap 5 dashboard template" />
-  <meta name="description" content="Nice Admin Lite is powerful and clean admin dashboard template, inpired from Bootstrap Framework" />
-  <meta name="robots" content="noindex,nofollow" />
-  <title>킥보드 상태 변경 - 두두 DuDu</title>
-  <link rel="canonical" href="https://www.wrappixel.com/templates/niceadmin-lite/" />
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png" />
-  <link href="assets/libs/chartist/dist/chartist.min.css" rel="stylesheet" />
-  <link href="css/style.min.css" rel="stylesheet" />
-  <style>
-    .status-container {
-      min-height: calc(100vh - 200px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .status-card {
-      max-width: 500px;
-      width: 100%;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>기기 상세 관리 - 두두 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<body class="bg-light">
+    <div class="d-flex">
+        <jsp:include page="adminSidebar.jsp" />
+        <div class="flex-grow-1 p-4" style="min-height: 100vh;">
+            
+            <h2 class="mb-4">기기 상세 정보</h2>
 
-<body>
-  <div class="preloader">
-    <div class="lds-ripple">
-      <div class="lds-pos"></div>
-      <div class="lds-pos"></div>
-    </div>
-  </div>
+            <div class="card shadow-sm border-0" style="max-width: 600px;">
+                <div class="card-header bg-white fw-bold">기기 정보 수정</div>
+                <div class="card-body p-4">
+                    
+                    <form action="kickboardUpdateAction.jsp" method="post">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">기기 ID</label>
+                            <input type="text" class="form-control bg-light" name="id" value="<%=id%>" readonly>
+                        </div>
 
-  <div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full"
-    data-boxed-layout="full">
-    
-    <header class="topbar" data-navbarbg="skin6">
-      <nav class="navbar top-navbar navbar-expand-md navbar-light">
-        <div class="navbar-header" data-logobg="skin5">
-          <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
-            <i class="ti-menu ti-close"></i>
-          </a>
-          <div class="navbar-brand">
-            <a href="main.jsp" class="logo">
-              <b class="logo-icon">
-                <img src="assets/images/DuDu_LOGO.jpg" alt="homepage" class="light-logo" />
-              </b>
-              <span class="logo-text">
-                <img src="assets/images/DuDu_LOGOtext.png" class="light-logo" alt="homepage" />
-              </span>
-            </a>
-          </div>
-        </div>
-        
-        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-          <ul class="navbar-nav float-start me-auto">
-            <li class="nav-item search-box">
-              <a class="nav-link waves-effect waves-dark" href="javascript:void(0)">
-                <div class="d-flex align-items-center">
-                  <i class="mdi mdi-magnify font-20 me-1"></i>
-                  <div class="ms-1 d-none d-sm-block"><span>Search</span></div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">모델명</label>
+                            <input type="text" class="form-control" name="model" value="<%=model%>" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">등록일</label>
+                            <input type="text" class="form-control" value="<%=regDate%>" readonly>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">현재 상태</label>
+                            <select class="form-select" name="status">
+                                <option value="A" <%="A".equals(status)?"selected":""%>>운영가능 (A)</option>
+                                <option value="M" <%="M".equals(status)?"selected":""%>>점검중 (M)</option>
+                                <option value="O" <%="O".equals(status)?"selected":""%>>사용중 (O)</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="kickboard-list.jsp" class="btn btn-secondary">취소 (목록으로)</a>
+                            <button type="submit" class="btn btn-primary">변경사항 저장</button>
+                        </div>
+                    </form>
+
                 </div>
-              </a>
-              <form class="app-search position-absolute">
-                <input type="text" class="form-control" placeholder="Search &amp; enter" />
-                <a class="srh-btn"><i class="mdi mdi mdi-close"></i></a>
-              </form>
-            </li>
-          </ul>
-          
-          <ul class="navbar-nav float-end">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                <img src="assets/images/Ellipse 2.png" class="rounded-circle" style="width:30px;height:30px;">
-              </a>
-              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="profile.jsp">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> 내 정보
-                </a>
-                <a class="dropdown-item" href="change-password.jsp">
-                  <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i> 비밀번호 변경
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> 로그아웃
-                </a>
-                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#alert">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> 알람1
-                </a>
-                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#alert2">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> 알람2
-                </a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </header>
-
-    <aside class="left-sidebar" data-sidebarbg="skin5">
-  <div class="scroll-sidebar">
-    <nav class="sidebar-nav">
-      <ul id="sidebarnav">
-        
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="main.jsp" aria-expanded="false">
-            <i class="mdi mdi-av-timer"></i><span class="hide-menu">메인</span>
-          </a>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-            <i class="mdi mdi-account-settings"></i><span class="hide-menu">관리자 관리</span>
-          </a>
-          <ul aria-expanded="false" class="collapse first-level">
-            <li class="sidebar-item"><a href="admin-login.jsp" class="sidebar-link"><i class="mdi mdi-login"></i><span class="hide-menu">관리자 로그인</span></a></li>
-            <li class="sidebar-item"><a href="admin-join.jsp" class="sidebar-link"><i class="mdi mdi-account-plus"></i><span class="hide-menu">관리자 등록</span></a></li>
-            <li class="sidebar-item"><a href="change-password.jsp" class="sidebar-link"><i class="mdi mdi-key-change"></i><span class="hide-menu">비밀번호 변경</span></a></li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item selected">
-          <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-            <i class="mdi mdi-scooter"></i><span class="hide-menu">킥보드 관리</span>
-          </a>
-          <ul aria-expanded="false" class="collapse first-level in">
-            <li>
-                <a href="kickboard-list.jsp" class="sidebar-link active">
-                    <i class="mdi mdi-format-list-bulleted"></i><span class="hide-menu">킥보드 목록</span>
-                </a>
-            </li>
-            <li class="sidebar-item"><a href="kickboard-register.jsp" class="sidebar-link"><i class="mdi mdi-plus-circle"></i><span class="hide-menu">킥보드 등록</span></a></li>
-            <li class="sidebar-item active"><a href="kickboard-status.jsp" class="sidebar-link"><i class="mdi mdi-information"></i><span class="hide-menu">킥보드 상태</span></a></li>
-            <li class="sidebar-item"><a href="device-status.jsp" class="sidebar-link"><i class="mdi mdi-account-network"></i><span class="hide-menu">기기 현황</span></a></li>
-            <li class="sidebar-item"><a href="ride-log-list.jsp" class="sidebar-link"><i class="mdi mdi-history"></i><span class="hide-menu">주행 기록</span></a></li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="user-status.jsp" aria-expanded="false">
-            <i class="mdi mdi-face"></i><span class="hide-menu">유저 관리</span>
-          </a>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-            <i class="mdi mdi-headset"></i><span class="hide-menu">고객센터</span>
-          </a>
-          <ul aria-expanded="false" class="collapse first-level">
-            <li class="sidebar-item"><a href="service-center.jsp" class="sidebar-link"><i class="mdi mdi-email"></i><span class="hide-menu">문의 목록</span></a></li>
-            <li class="sidebar-item"><a href="inquiry-history.jsp" class="sidebar-link"><i class="mdi mdi-history"></i><span class="hide-menu">처리 이력</span></a></li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="data-management.jsp" aria-expanded="false">
-            <i class="mdi mdi-border-none"></i><span class="hide-menu">데이터 관리</span>
-          </a>
-        </li>
-
-      </ul>
-    </nav>
-  </div>
-</aside>
-
-    <div class="page-wrapper">
-      <div class="page-breadcrumb">
-        <div class="row">
-          <div class="col-5 align-self-center">
-            <h4 class="page-title">킥보드 상태 변경</h4>
-          </div>
-          <div class="col-7 align-self-center">
-            <div class="d-flex align-items-center justify-content-end">
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="main.jsp">홈</a></li>
-                  <li class="breadcrumb-item">킥보드 관리</li>
-                  <li class="breadcrumb-item active" aria-current="page">상태 변경</li>
-                </ol>
-              </nav>
             </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="container-fluid">
-        <div class="status-container">
-          <div class="status-card">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title mb-4 text-center">킥보드 상태 변경</h4>
-                <form action="kickboardUpdateAction.jsp" method="post">
-                  <div class="mb-3">
-                    <label for="kickboardId" class="form-label">킥보드 ID</label>
-                    <input type="text" class="form-control" id="kickboardId" name="kickboardId" value="KB-001" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="modelNm" class="form-label">모델명</label>
-                    <input type="text" class="form-control" id="modelNm" name="modelNm" value="모델 A" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="currentStatus" class="form-label">현재 상태</label>
-                    <input type="text" class="form-control" id="currentStatus" value="운영중" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="kickboardSt" class="form-label">변경할 상태</label>
-                    <select class="form-control" id="kickboardSt" name="kickboardSt" required>
-                      <option value="">상태를 선택하세요</option>
-                      <option value="O">운영중</option>
-                      <option value="M">점검중</option>
-                      <option value="X">서비스 중단</option>
-                    </select>
-                  </div>
-                  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="kickboard-list.jsp" class="btn btn-secondary">취소</a>
-                    <button type="submit" class="btn btn-primary">저장</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <footer class="footer text-center">
-        All Rights Reserved by Nice admin. Designed and Developed by
-        <a href="https://www.wrappixel.com">WrapPixel</a>.
-      </footer>
-    </div>
-  </div>
 
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">로그아웃 하시겠습니까?</h5>
-          <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">취소</button>
-          <a class="btn btn-primary" href="login.jsp">로그아웃</a>
-        </div>
-      </div>
     </div>
-  </div>
-  
-  <div class="modal fade" id="alert" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">헬멧을 착용해주세요</h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">확인</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="modal fade" id="alert2" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">핸드폰 소리를 키워주세요</h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">확인</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="assets/libs/jquery/dist/jquery.min.js"></script>
-  <script src="assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/extra-libs/sparkline/sparkline.js"></script>
-  <script src="js/waves.js"></script>
-  <script src="js/sidebarmenu.js"></script>
-  <script src="js/custom.min.js"></script>
-  <script src="assets/libs/chartist/dist/chartist.min.js"></script>
-  <script src="assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
-  <script src="js/pages/dashboards/dashboard1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

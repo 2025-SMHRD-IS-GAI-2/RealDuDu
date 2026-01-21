@@ -1,443 +1,232 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*, java.util.*" %>
+<%
+    // [Backend] DB 통계 데이터 조회
+    
+    int avgScore = 0;        // 평균 안전 점수
+    int totalWarnings = 0;   // 누적 경고(미착용) 횟수 (전체 기간)
+    int todayWarnings = 0;   // [추가] 오늘 발생한 경고 횟수 (차트용)
+    int helmetRate = 0;      // 헬멧 착용률 (%)
+    int totalRideCount = 0;  // 총 주행 횟수
+
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+    String url = "jdbc:oracle:thin:@project-db-campus.smhrd.com:1524:xe";
+    String dbId = "campus_25IS_GA2_p2_4";
+    String dbPw = "smhrd4";
+
+    try {
+        Class.forName("oracle.jdbc.driver.OracleDriver");
+        conn = DriverManager.getConnection(url, dbId, dbPw);
+
+        // ---------------------------------------------------
+        // [Query 1] 유저 평균 점수
+        // ---------------------------------------------------
+        String sql1 = "SELECT AVG(SAFETY_SCORE) AS AVG_SCORE FROM TB_USER";
+        ps = conn.prepareStatement(sql1);
+        rs = ps.executeQuery();
+        if (rs.next()) avgScore = (int) Math.round(rs.getDouble("AVG_SCORE"));
+        rs.close(); ps.close();
+
+        // ---------------------------------------------------
+        // [Query 2] 전체 통계 (누적)
+        // ---------------------------------------------------
+        String sql2 = "SELECT COUNT(*) AS TOTAL_RIDE, "
+                    + "SUM(CASE WHEN NOHELMET_CNT > 0 THEN 1 ELSE 0 END) AS VIOLATION_RIDE "
+                    + "FROM TB_RIDE";
+        ps = conn.prepareStatement(sql2);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            int totalRide = rs.getInt("TOTAL_RIDE");
+            int violationRide = rs.getInt("VIOLATION_RIDE");
+            totalRideCount = totalRide;
+            totalWarnings = violationRide; // 여기가 286
+            if(totalRide > 0) helmetRate = (int) (((double)(totalRide - violationRide) / totalRide) * 100);
+        }
+        rs.close(); ps.close();
+
+        // ---------------------------------------------------
+        // [Query 3] 오늘 날짜 경고 횟수만 따로 조회 (차트 수정용)
+        // ---------------------------------------------------
+        String sql3 = "SELECT COUNT(*) AS TODAY_CNT FROM TB_RIDE "
+                    + "WHERE NOHELMET_CNT > 0 "
+                    + "AND TO_CHAR(START_DT, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')";
+        ps = conn.prepareStatement(sql3);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            todayWarnings = rs.getInt("TODAY_CNT"); // 오늘은 0 또는 소수
+        }
+
+    } catch(Exception e) {
+        e.printStackTrace();
+    } finally {
+        if(rs!=null) try{rs.close();}catch(Exception e){}
+        if(ps!=null) try{ps.close();}catch(Exception e){}
+        if(conn!=null) try{conn.close();}catch(Exception e){}
+    }
+    
+    // [등급 결정 로직]
+    String gradeName = "BRONZE";
+    String gradeColor = "bg-bronze";
+    String gradeIcon = "bi-shield";
+
+    if (avgScore >= 81) { gradeName = "DIAMOND"; gradeColor = "bg-diamond"; gradeIcon = "bi-stars"; }
+    else if (avgScore >= 61) { gradeName = "PLATINUM"; gradeColor = "bg-platinum"; gradeIcon = "bi-gem"; }
+    else if (avgScore >= 41) { gradeName = "GOLD"; gradeColor = "bg-gold"; gradeIcon = "bi-trophy-fill"; }
+    else if (avgScore >= 21) { gradeName = "SILVER"; gradeColor = "bg-silver"; gradeIcon = "bi-shield-check"; }
+    else if (avgScore >= 1) { gradeName = "BRONZE"; gradeColor = "bg-bronze"; gradeIcon = "bi-shield"; }
+    else { gradeName = "BLACKLIST"; gradeColor = "bg-blacklist"; gradeIcon = "bi-slash-circle"; }
+%>
+
 <!DOCTYPE html>
-<html dir="ltr" lang="ko">
-
+<html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="keywords" content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, Nice lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, Nice admin lite design, Nice admin lite dashboard bootstrap 5 dashboard template" />
-  <meta name="description" content="Nice Admin Lite is powerful and clean admin dashboard template, inpired from Bootstrap Framework" />
-  <meta name="robots" content="noindex,nofollow" />
-  <title>데이터 관리 - 두두 DuDu</title>
-  <link rel="canonical" href="https://www.wrappixel.com/templates/niceadmin-lite/" />
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png" />
-  <link href="assets/libs/chartist/dist/chartist.min.css" rel="stylesheet" />
-  <link href="css/style.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-  <![endif]-->
-
-
-
-  <style>
-    /* 데이터 카드 스타일 */
-    .stat-card { transition: transform 0.2s; }
-    .stat-card:hover { transform: translateY(-5px); }
-    .grade-circle {
-      width: 60px; height: 60px;
-      background-color: #28b779;
-      color: white;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; font-weight: bold;
-      margin: 0 auto;
-    }
-    .filter-box {
-      background: #f8f9fa;
-      border-radius: 5px;
-      padding: 15px;
-      margin-bottom: 20px;
-    }
-    .stat-card .card-body h6 { margin-top: 6px; margin-bottom: 10px; }
-    .stat-card .card-body i, .stat-card .card-body .grade-circle {
-      display: block; margin: 0 auto;
-      height: 60px; line-height: 60px;
-    }    
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>데이터 통합 관리 - 두두 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        .stat-card { transition: transform 0.2s; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); }
+        .stat-card:hover { transform: translateY(-3px); }
+        .grade-circle { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; color: white; margin: 0 auto 10px auto; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .bg-blacklist { background: #212529; }
+        .bg-bronze    { background: linear-gradient(45deg, #cd7f32, #dfa579); }
+        .bg-silver    { background: linear-gradient(45deg, #c0c0c0, #e0e0e0); }
+        .bg-gold      { background: linear-gradient(45deg, #ffd700, #fdb931); }
+        .bg-platinum  { background: linear-gradient(45deg, #00ced1, #48d1cc); }
+        .bg-diamond   { background: linear-gradient(45deg, #b9f2ff, #0072ff); }
+        .chart-container { position: relative; height: 350px; width: 100%; }
+    </style>
 </head>
 
-<body>
-  <div class="preloader">
-    <div class="lds-ripple">
-      <div class="lds-pos"></div>
-      <div class="lds-pos"></div>
-    </div>
-  </div>
-  <div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full"
-    data-boxed-layout="full">
-    
-    <header class="topbar" data-navbarbg="skin6">
-      <nav class="navbar top-navbar navbar-expand-md navbar-light">
-        <div class="navbar-header" data-logobg="skin5">
-          <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
-            <i class="ti-menu ti-close"></i>
-          </a>
-          <div class="navbar-brand">
-            <a href="index.jsp" class="logo">
-              <!-- Logo icon -->
-              <b class="logo-icon">
-                <img src="assets/images/DuDu_LOGO.jpg" alt="homepage" class="light-logo" />
-              </b>
-              <!--End Logo icon -->
-              <!-- Logo text -->
-              <span class="logo-text">
-                <img src="assets/images/DuDu_LOGOtext.png" class="light-logo" alt="homepage" />
-              </span>
-            </a>
-          </div>
-          <!-- ============================================================== -->
-          <!-- End Logo -->
-          <!-- ============================================================== -->
-          <!-- ============================================================== -->
-          <!-- Toggle which is visible on mobile only -->
-          <!-- ============================================================== -->
-        </div>
-        <!-- ============================================================== -->
-        <!-- End Logo -->
-        <!-- ============================================================== -->
-        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-          <!-- ============================================================== -->
-          <!-- toggle and nav items -->
-          <!-- ============================================================== -->
-          <ul class="navbar-nav float-start me-auto">
-            <!-- ============================================================== -->
-            <!-- Search -->
-            <!-- ============================================================== -->
-            <li class="nav-item search-box">
-              <a class="nav-link waves-effect waves-dark" href="javascript:void(0)">
-                <div class="d-flex align-items-center">
-                  <i class="mdi mdi-magnify font-20 me-1"></i>
-                  <div class="ms-1 d-none d-sm-block">
-                    <span>Search</span>
-                  </div>
+<body class="bg-light">
+    <div class="d-flex">
+        <jsp:include page="adminSidebar.jsp" />
+
+        <div class="flex-grow-1 p-4" style="min-height: 100vh;">
+            <h2 class="mb-4">데이터 통합 관리</h2>
+
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <form class="d-flex align-items-center gap-2">
+                        <i class="bi bi-calendar-check text-muted me-2"></i>
+                        <span class="fw-bold me-2">데이터 기준:</span>
+                        <span class="text-primary fw-bold">실시간 DB 데이터 (TB_RIDE)</span>
+                    </form>
                 </div>
-              </a>
-              <form class="app-search position-absolute">
-                <input type="text" class="form-control" placeholder="Search &amp; enter" />
-                <a class="srh-btn">
-                  <i class="mdi mdi mdi-close"></i>
-                </a>
-              </form>
-            </li>
-          </ul>
-          <!-- ============================================================== -->
-          <!-- Right side toggle and nav items -->
-          <!-- ============================================================== -->
+            </div>
 
-        </div>
-        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-          <ul class="navbar-nav float-start me-auto">
-            <li class="nav-item search-box">
-              <a class="nav-link waves-effect waves-dark" href="javascript:void(0)">
-                <div class="d-flex align-items-center">
-                  <i class="mdi mdi-magnify font-20 me-1"></i>
-                  <div class="ms-1 d-none d-sm-block"><span>Search</span></div>
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card h-100 text-center py-3">
+                        <div class="card-body">
+                            <h6 class="text-muted fw-bold mb-3">전체 사용자 평균 등급</h6>
+                            <div class="grade-circle <%=gradeColor%>"><i class="bi <%=gradeIcon%>"></i></div>
+                            <h3 class="fw-bold mb-1" style="color: #333;"><%=avgScore%>점</h3>
+                            <span class="badge rounded-pill <%=gradeColor%>"><%=gradeName%></span>
+                        </div>
+                    </div>
                 </div>
-              </a>
-              <form class="app-search position-absolute">
-                <input type="text" class="form-control" placeholder="Search &amp; enter" />
-                <a class="srh-btn"><i class="mdi mdi mdi-close"></i></a>
-              </form>
-            </li>
-          </ul>
-          <ul class="navbar-nav float-end">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                <img src="assets/images/Ellipse 2.png" class="rounded-circle" style="width:30px;height:30px;">
-              </a>
-              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="profile.jsp">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> 내 정보
-                </a>
-                <a class="dropdown-item" href="change-password.jsp">
-                  <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i> 비밀번호 변경
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> 로그아웃
-                </a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </header>
-    <!-- ============================================================== -->
-    <!-- End Topbar header -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <aside class="left-sidebar" data-sidebarbg="skin5">
-  <div class="scroll-sidebar">
-    <nav class="sidebar-nav">
-      <ul id="sidebarnav">
-        
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="main.jsp" aria-expanded="false">
-            <i class="mdi mdi-av-timer"></i><span class="hide-menu">메인</span>
-          </a>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-            <i class="mdi mdi-account-settings"></i><span class="hide-menu">관리자 관리</span>
-          </a>
-          <ul aria-expanded="false" class="collapse first-level">
-            <li class="sidebar-item"><a href="admin-login.jsp" class="sidebar-link"><i class="mdi mdi-login"></i><span class="hide-menu">관리자 로그인</span></a></li>
-            <li class="sidebar-item"><a href="admin-join.jsp" class="sidebar-link"><i class="mdi mdi-account-plus"></i><span class="hide-menu">관리자 등록</span></a></li>
-            <li class="sidebar-item"><a href="change-password.jsp" class="sidebar-link"><i class="mdi mdi-key-change"></i><span class="hide-menu">비밀번호 변경</span></a></li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-            <i class="mdi mdi-scooter"></i><span class="hide-menu">킥보드 관리</span>
-          </a>
-          <ul aria-expanded="false" class="collapse first-level">
-            <li class="sidebar-item"><a href="kickboard-list.jsp" class="sidebar-link"><i class="mdi mdi-format-list-bulleted"></i><span class="hide-menu">킥보드 목록</span></a></li>
-            <li class="sidebar-item"><a href="kickboard-register.jsp" class="sidebar-link"><i class="mdi mdi-plus-circle"></i><span class="hide-menu">킥보드 등록</span></a></li>
-            <li class="sidebar-item"><a href="kickboard-status.jsp" class="sidebar-link"><i class="mdi mdi-information"></i><span class="hide-menu">킥보드 상태</span></a></li>
-            <li class="sidebar-item"><a href="device-status.jsp" class="sidebar-link"><i class="mdi mdi-account-network"></i><span class="hide-menu">기기 현황</span></a></li>
-            <li class="sidebar-item"><a href="ride-log-list.jsp" class="sidebar-link"><i class="mdi mdi-history"></i><span class="hide-menu">주행 기록</span></a></li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="user-status.jsp" aria-expanded="false">
-            <i class="mdi mdi-face"></i><span class="hide-menu">유저 관리</span>
-          </a>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-            <i class="mdi mdi-headset"></i><span class="hide-menu">고객센터</span>
-          </a>
-          <ul aria-expanded="false" class="collapse first-level">
-            <li class="sidebar-item"><a href="service-center.jsp" class="sidebar-link"><i class="mdi mdi-email"></i><span class="hide-menu">문의 목록</span></a></li>
-            <li class="sidebar-item"><a href="inquiry-history.jsp" class="sidebar-link"><i class="mdi mdi-history"></i><span class="hide-menu">처리 이력</span></a></li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item selected">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link active" href="data-management.jsp" aria-expanded="false">
-            <i class="mdi mdi-border-none"></i><span class="hide-menu">데이터 관리</span>
-          </a>
-        </li>
-
-      </ul>
-    </nav>
-  </div>
-</aside>
-
-    <div class="page-wrapper">
-      <div class="page-breadcrumb">
-        <div class="row">
-          <div class="col-5 align-self-center">
-            <h4 class="page-title">데이터 통합 관리</h4>
-          </div>
-          <div class="col-7 align-self-center">
-            <div class="d-flex align-items-center justify-content-end">
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="main.jsp">홈</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">데이터 관리</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card filter-box">
-              <div class="d-flex align-items-center flex-wrap gap-2">
-                <h5 class="mb-0 me-3 fw-bold"><i class="mdi mdi-calendar-clock"></i> 기간 설정:</h5>
-                <input type="date" class="form-control w-auto" value="2026-01-01">
-                <span class="mx-1">~</span>
-                <input type="date" class="form-control w-auto" value="2026-01-13">
-                <button class="btn btn-primary text-white ms-2">조회하기</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-3">
-            <div class="card stat-card">
-              <div class="card-body text-center">
-                <h6 class="text-muted">통합 안전 등급</h6>
-                <div class="grade-circle mb-2">A</div>
-                <h3 class="fw-bold text-success">92점</h3>
-                <small class="text-muted">전주 대비 +2점 상승</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card stat-card">
-              <div class="card-body text-center">
-                <h6 class="text-muted">누적 경고 횟수</h6>
-                <i class="mdi mdi-alert text-danger display-5"></i>
-                <h3 class="fw-bold mt-2">124회</h3>
-                <small class="text-danger">최근 3일간 급증 ⚠️</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card stat-card">
-              <div class="card-body text-center">
-                <h6 class="text-muted">평균 헬멧 착용률</h6>
-                <i class="mdi mdi-motorbike text-info display-5"></i>
-                <h3 class="fw-bold mt-2">78.5%</h3>
-                <small class="text-success">목표치(80%) 근접</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card stat-card">
-              <div class="card-body text-center">
-                <h6 class="text-muted">재착용 소요 시간</h6>
-                <i class="mdi mdi-timer-sand text-warning display-5"></i>
-                <h3 class="fw-bold mt-2">18초</h3>
-                <small class="text-muted">경고 후 착용까지 평균</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-lg-8">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">📉 일별 경고 및 헬멧 미착용 추이</h4>
-                <canvas id="trendChart" height="100"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">📊 사용자 안전 등급 분포</h4>
-                <canvas id="gradeChart" height="100"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">📋 상세 로그 데이터</h4>
-                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                  <table class="table table-hover table-bordered text-center">
-                    <thead class="table-light">
-                      <tr>
-                        <th>발생 일시</th>
-                        <th>기기 ID</th>
-                        <th>이벤트 유형</th>
-                        <th>재착용 시간</th>
-                        <th>안전 점수 변동</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>2026-01-13 14:30</td>
-                        <td>SC-1004</td>
-                        <td><span class="badge bg-danger">헬멧 미착용</span></td>
-                        <td>25초</td>
-                        <td class="text-danger">-5점</td>
-                      </tr>
-                      <tr>
-                        <td>2026-01-13 13:15</td>
-                        <td>SC-1001</td>
-                        <td><span class="badge bg-warning text-dark">급정거 경고</span></td>
-                        <td>-</td>
-                        <td class="text-danger">-2점</td>
-                      </tr>
-                      <tr>
-                        <td>2026-01-13 12:00</td>
-                        <td>SC-1023</td>
-                        <td><span class="badge bg-success">정상 반납</span></td>
-                        <td>-</td>
-                        <td class="text-success">+1점</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div class="col-md-3">
+                    <div class="card stat-card h-100 text-center py-3">
+                        <div class="card-body">
+                            <h6 class="text-muted fw-bold mb-3">누적 헬멧 경고</h6>
+                            <div class="mb-3 text-danger display-6"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                            <h3 class="fw-bold text-danger mb-1"><%=totalWarnings%>회</h3>
+                            <small class="text-danger">헬멧 미착용 감지 총합</small>
+                        </div>
+                    </div>
                 </div>
-              </div>
+                <div class="col-md-3">
+                    <div class="card stat-card h-100 text-center py-3">
+                        <div class="card-body">
+                            <h6 class="text-muted fw-bold mb-3">평균 헬멧 착용률</h6>
+                            <div class="mb-3 text-primary display-6"><i class="bi bi-scooter"></i></div>
+                            <h3 class="fw-bold text-dark mb-1"><%=helmetRate%>%</h3>
+                            <small class="text-success fw-bold">전체 주행 대비 정상 비율</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card h-100 text-center py-3">
+                        <div class="card-body">
+                            <h6 class="text-muted fw-bold mb-3">총 이용 횟수</h6>
+                            <div class="mb-3 text-success display-6"><i class="bi bi-people-fill"></i></div>
+                            <h3 class="fw-bold text-dark mb-1"><%=totalRideCount%>회</h3>
+                            <small class="text-muted">서비스 누적 이용 건수</small>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
 
-      </div>
-
-      <footer class="footer text-center">
-        All Rights Reserved by Nice admin. Designed and Developed by <a href="https://www.wrappixel.com">WrapPixel</a>.
-      </footer>
+            <div class="row g-3 mb-4">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="m-0 fw-bold"><i class="bi bi-graph-up"></i> 일별 경고 추이 (최근 7일)</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="dailyTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="m-0 fw-bold"><i class="bi bi-pie-chart-fill"></i> 등급 분포</h6>
+                        </div>
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <div style="height: 300px; width: 100%;">
+                                <canvas id="gradeDistChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
     </div>
-  </div>
 
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">로그아웃 하시겠습니까?</h5>
-          <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">취소</button>
-          <a class="btn btn-primary" href="login.jsp">로그아웃</a>
-        </div>
-      </div>
-    </div>
-  </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script src="assets/libs/jquery/dist/jquery.min.js"></script>
-  <script src="assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/custom.min.js"></script>
+    <script>
+        // [수정됨] 차트 데이터: 앞의 숫자들은 예시(Dummy)로 두고, 
+        // 마지막 '오늘' 데이터만 DB의 todayWarnings 변수로 교체했습니다.
+        const ctxDaily = document.getElementById('dailyTrendChart').getContext('2d');
+        new Chart(ctxDaily, {
+            type: 'line',
+            data: {
+                labels: ['D-6', 'D-5', 'D-4', 'D-3', 'D-2', '어제', '오늘'],
+                datasets: [{
+                    label: '일일 경고 횟수',
+                    // 기존: [..., <%=totalWarnings%>] -> 수정: [..., <%=todayWarnings%>]
+                    data: [2, 5, 3, 8, 4, 12, <%=todayWarnings%>], 
+                    borderColor: '#ff6b6b', backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                    fill: true, tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
 
-  <script>
-    // 1. 선 그래프 (추이 분석)
-    const ctx1 = document.getElementById('trendChart').getContext('2d');
-    new Chart(ctx1, {
-      type: 'line',
-      data: {
-        labels: ['1/07', '1/08', '1/09', '1/10', '1/11', '1/12', '1/13'],
-        datasets: [
-          {
-            label: '경고 횟수',
-            data: [12, 19, 3, 5, 2, 3, 10],
-            borderColor: '#ff6b6b',
-            tension: 0.4
-          },
-          {
-            label: '헬멧 착용률(%)',
-            data: [85, 82, 90, 88, 92, 89, 78],
-            borderColor: '#28b779',
-            tension: 0.4
-          }
-        ]
-      },
-      options: { responsive: true }
-    });
-
-    // 2. 도넛 그래프 (등급 분포)
-    const ctx2 = document.getElementById('gradeChart').getContext('2d');
-    new Chart(ctx2, {
-      type: 'doughnut',
-      data: {
-        labels: ['A등급 (안전)', 'B등급 (보통)', 'C등급 (위험)'],
-        datasets: [{
-          data: [30, 15, 5],
-          backgroundColor: ['#28b779', '#ffca2c', '#dc3545'],
-          hoverOffset: 4
-        }]
-      }
-    });
-  </script>
+        const ctxGrade = document.getElementById('gradeDistChart').getContext('2d');
+        new Chart(ctxGrade, {
+            type: 'doughnut',
+            data: {
+                labels: ['다이아', '플래티넘', '골드', '실버', '브론즈', '블랙'],
+                datasets: [{
+                    data: [10, 20, 30, 20, 15, 5],
+                    backgroundColor: ['#0072ff', '#00ced1', '#ffd700', '#c0c0c0', '#cd7f32', '#212529'],
+                    hoverOffset: 4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+    </script>
 </body>
 </html>

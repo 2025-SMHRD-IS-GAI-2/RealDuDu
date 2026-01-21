@@ -6,7 +6,8 @@
 
     // 1. 폼 데이터 받기
     String id = request.getParameter("id");
-    String status = request.getParameter("status"); // A, M, O 중 하나
+    String model = request.getParameter("model");
+    String status = request.getParameter("status");
 
     Connection conn = null;
     PreparedStatement ps = null;
@@ -20,12 +21,14 @@
         Class.forName("oracle.jdbc.driver.OracleDriver");
         conn = DriverManager.getConnection(url, dbId, dbPw);
 
-        // 2. [SQL] 상태 업데이트
-        String sql = "UPDATE TB_KICKBOARD SET KICKBOARD_ST = ? WHERE KICKBOARD_ID = ?";
+        // 2. [SQL] 데이터 삽입 (INSERT)
+        // KICKBOARD_ID, MODEL_NM, KICKBOARD_ST, REG_DT
+        String sql = "INSERT INTO TB_KICKBOARD (KICKBOARD_ID, MODEL_NM, KICKBOARD_ST, REG_DT) VALUES (?, ?, ?, SYSDATE)";
         
         ps = conn.prepareStatement(sql);
-        ps.setString(1, status);
-        ps.setString(2, id);
+        ps.setString(1, id);
+        ps.setString(2, model);
+        ps.setString(3, status);
 
         int row = ps.executeUpdate();
         if(row > 0) isSuccess = true;
@@ -39,10 +42,10 @@
 %>
 <script>
     <% if(isSuccess) { %>
-        alert("기기 상태가 변경되었습니다.");
-        location.href = "kickboard-list.jsp"; // 성공 시 목록으로 이동
+        alert("신규 기기가 성공적으로 등록되었습니다.");
+        location.href = "kickboard-list.jsp"; // 등록 후 목록으로 이동
     <% } else { %>
-        alert("변경 실패! 관리자에게 문의하세요.");
+        alert("등록 실패! 기기 ID가 중복되었거나 DB 오류입니다.");
         history.back();
     <% } %>
 </script>

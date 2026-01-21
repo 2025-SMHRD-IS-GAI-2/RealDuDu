@@ -4,9 +4,10 @@
 <%
     request.setCharacterEncoding("UTF-8");
 
-    // 1. 폼 데이터 받기
+    // 1. adminjoin.jsp에서 보낸 데이터 받기
     String id = request.getParameter("id");
-    String status = request.getParameter("status"); // A, M, O 중 하나
+    String pw = request.getParameter("pw");
+    String name = request.getParameter("name");
 
     Connection conn = null;
     PreparedStatement ps = null;
@@ -20,12 +21,13 @@
         Class.forName("oracle.jdbc.driver.OracleDriver");
         conn = DriverManager.getConnection(url, dbId, dbPw);
 
-        // 2. [SQL] 상태 업데이트
-        String sql = "UPDATE TB_KICKBOARD SET KICKBOARD_ST = ? WHERE KICKBOARD_ID = ?";
+        // 2. 관리자 데이터 삽입 (부서코드 없음)
+        String sql = "INSERT INTO TB_ADMIN (ADMIN_ID, ADMIN_PW, ADMIN_NM, REG_DT) VALUES (?, ?, ?, SYSDATE)";
         
         ps = conn.prepareStatement(sql);
-        ps.setString(1, status);
-        ps.setString(2, id);
+        ps.setString(1, id);
+        ps.setString(2, pw);
+        ps.setString(3, name);
 
         int row = ps.executeUpdate();
         if(row > 0) isSuccess = true;
@@ -37,12 +39,13 @@
         if(conn!=null) try{conn.close();}catch(Exception e){}
     }
 %>
+
 <script>
     <% if(isSuccess) { %>
-        alert("기기 상태가 변경되었습니다.");
-        location.href = "kickboard-list.jsp"; // 성공 시 목록으로 이동
+        alert("관리자가 성공적으로 등록되었습니다.");
+        location.href = "main.jsp"; 
     <% } else { %>
-        alert("변경 실패! 관리자에게 문의하세요.");
+        alert("등록 실패! 이미 사용 중인 아이디입니다.");
         history.back();
     <% } %>
 </script>

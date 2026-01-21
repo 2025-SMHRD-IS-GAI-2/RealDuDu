@@ -1,630 +1,341 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html dir="ltr" lang="en">
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="java.util.*"%>
 
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="keywords"
-    content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, Nice lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, Nice admin lite design, Nice admin lite dashboard bootstrap 5 dashboard template" />
-  <meta name="description"
-    content="Nice Admin Lite is powerful and clean admin dashboard template, inpired from Bootstrap Framework" />
-  <meta name="robots" content="noindex,nofollow" />
-  <title>두두 DuDu</title>
-  <link rel="canonical" href="https://www.wrappixel.com/templates/niceadmin-lite/" />
-  <!-- Favicon icon -->
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png" />
-  <!-- Custom CSS -->
-  <link href="assets/libs/chartist/dist/chartist.min.css" rel="stylesheet" />
-  <!-- Custom CSS -->
-  <link href="css/style.min.css" rel="stylesheet" />
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  <style>
-    .filter-box {
-      background: #f8f9fa;
-      border-radius: 5px;
-      padding: 15px;  
-      margin-bottom: 20px;
+<%
+    // =================================================================
+    // [Backend] 지자체/관리자용 메인 대시보드 (DB 연동 최종판)
+    // =================================================================
+    
+    String url = "jdbc:oracle:thin:@project-db-campus.smhrd.com:1524:xe";
+    String dbId = "campus_25IS_GA2_p2_4";
+    String dbPw = "smhrd4";
+
+    // 데이터 담을 변수
+    StringBuilder sbDates = new StringBuilder();   // 날짜 라벨
+    StringBuilder sbScores = new StringBuilder();  // 안전점수 추이
+    StringBuilder sbWarns = new StringBuilder();   // 경고 발생 추이
+    
+    StringBuilder sbWorstUsers = new StringBuilder(); // 상습 위반자 ID
+    StringBuilder sbWorstCounts = new StringBuilder(); // 위반 횟수
+
+    int totalUserCount = 0; // 총 회원 수
+    List<Map<String, String>> recentUserList = new ArrayList<>(); // 하단 테이블 리스트
+
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+    try {
+        Class.forName("oracle.jdbc.driver.OracleDriver");
+        conn = DriverManager.getConnection(url, dbId, dbPw);
+
+        // -----------------------------------------------------------
+        // [SQL 1] 메인 차트: 최근 7일간 안전 지표 추이
+        // -----------------------------------------------------------
+        String sql1 = "SELECT * FROM (" 
+                    + "  SELECT TO_CHAR(START_DT, 'MM/DD') AS DT, "
+                    + "         ROUND(AVG(SCORE_CG), 1) AS AVG_SCORE, " 
+                    + "         SUM(NOHELMET_CNT) AS SUM_WARN "
+                    + "  FROM TB_RIDE " 
+                    + "  GROUP BY TO_CHAR(START_DT, 'MM/DD') " 
+                    + "  ORDER BY MIN(START_DT) DESC " 
+                    + ") WHERE ROWNUM <= 7 ORDER BY DT ASC";
+
+        ps = conn.prepareStatement(sql1);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            if (sbDates.length() > 0) { sbDates.append(","); sbScores.append(","); sbWarns.append(","); }
+            sbDates.append("'" + rs.getString("DT") + "'");
+            sbScores.append(rs.getDouble("AVG_SCORE")); 
+            sbWarns.append(rs.getInt("SUM_WARN"));      
+        }
+        rs.close(); ps.close();
+
+        // -----------------------------------------------------------
+        // [SQL 2] 워스트 유저 Top 5 (상습 헬멧 미착용자)
+        // -----------------------------------------------------------
+        String sql2 = "SELECT * FROM (" 
+                    + "  SELECT USER_ID, SUM(NOHELMET_CNT) AS TOTAL_WARN " 
+                    + "  FROM TB_RIDE "
+                    + "  GROUP BY USER_ID " 
+                    + "  ORDER BY TOTAL_WARN DESC " 
+                    + ") WHERE ROWNUM <= 5";
+
+        ps = conn.prepareStatement(sql2);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            int cnt = rs.getInt("TOTAL_WARN");
+            if(cnt > 0) { 
+                if (sbWorstUsers.length() > 0) { sbWorstUsers.append(","); sbWorstCounts.append(","); }
+                sbWorstUsers.append("'" + rs.getString("USER_ID") + "'");
+                sbWorstCounts.append(cnt);
+            }
+        }
+        rs.close(); ps.close();
+
+        // -----------------------------------------------------------
+        // [SQL 3] 전체 사용자 수
+        // -----------------------------------------------------------
+        String sql3 = "SELECT COUNT(*) FROM TB_USER";
+        ps = conn.prepareStatement(sql3);
+        rs = ps.executeQuery();
+        if (rs.next()) totalUserCount = rs.getInt(1);
+        rs.close(); ps.close();
+
+        // -----------------------------------------------------------
+        // [SQL 4] 최근 가입 사용자 목록
+        // -----------------------------------------------------------
+        String sql4 = "SELECT * FROM ("
+                    + "  SELECT USER_ID, USER_NM, SAFETY_SCORE, SAFETY_GR, TO_CHAR(JOIN_DT, 'YYYY-MM-DD') AS J_DT " 
+                    + "  FROM TB_USER "
+                    + "  ORDER BY JOIN_DT DESC "
+                    + ") WHERE ROWNUM <= 5";
+
+        ps = conn.prepareStatement(sql4);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Map<String, String> map = new HashMap<>();
+            map.put("name", rs.getString("USER_NM"));
+            map.put("id", rs.getString("USER_ID"));
+            map.put("date", rs.getString("J_DT"));
+            map.put("score", rs.getString("SAFETY_SCORE"));
+            
+            String grade = rs.getString("SAFETY_GR"); 
+            if(grade == null) grade = "-";
+            map.put("grade", grade);
+
+            String badge = "bg-secondary";
+
+            if ("DIAMOND".equals(grade)) badge = "bg-primary";
+            else if ("PLATINUM".equals(grade)) badge = "bg-info text-dark";
+            else if ("GOLD".equals(grade)) badge = "bg-warning text-dark";
+            else if ("BLACKLIST".equals(grade) || "Y".equals(rs.getString("SAFETY_GR"))) badge = "bg-dark";
+            else if ("1".equals(grade)) badge = "bg-success";
+
+            map.put("badge", badge);
+
+            recentUserList.add(map);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        if(rs!=null) try{rs.close();}catch(Exception e){}
+        if(ps!=null) try{ps.close();}catch(Exception e){}
+        if(conn!=null) try{conn.close();}catch(Exception e){}
     }
-  </style>
+
+    String chDates = (sbDates.length() == 0) ? "'데이터없음'" : sbDates.toString();
+    String chScores = (sbScores.length() == 0) ? "0" : sbScores.toString();
+    String chWarns = (sbWarns.length() == 0) ? "0" : sbWarns.toString();
+    
+    String chWorstUsers = (sbWorstUsers.length() == 0) ? "'위반없음'" : sbWorstUsers.toString();
+    String chWorstCounts = (sbWorstCounts.length() == 0) ? "0" : sbWorstCounts.toString();
+%>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>DUDU 안전 관제 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css">
+    
+    <style>
+        tbody tr:hover { background-color: #f8f9fa; cursor: pointer; }
+        .card-title { font-weight: bold; }
+    </style>
 </head>
 
-<body>
-  <!-- ============================================================== -->
-  <!-- Preloader - style you can find in spinners.css -->
-  <!-- ============================================================== -->
-  <div class="preloader">
-    <div class="lds-ripple">
-      <div class="lds-pos"></div>
-      <div class="lds-pos"></div>
-    </div>
-  </div>
-  <!-- ============================================================== -->
-  <!-- Main wrapper - style you can find in pages.scss -->
-  <!-- ============================================================== -->
-  <div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full"
-    data-boxed-layout="full">
-    <!-- ============================================================== -->
-    <!-- Topbar header - style you can find in pages.scss -->
-    <!-- ============================================================== -->
-    <header class="topbar" data-navbarbg="skin6">
-      <nav class="navbar top-navbar navbar-expand-md navbar-light">
-        <div class="navbar-header" data-logobg="skin5">
-          <!-- This is for the sidebar toggle which is visible on mobile only -->
-          <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
-            <i class="ti-menu ti-close"></i>
-          </a>
-          <!-- ============================================================== -->
-          <!-- Logo -->
-          <!-- ============================================================== -->
-          <div class="navbar-brand">
-            <a href="main.jsp" class="logo">
-              <!-- Logo icon -->
-              <b class="logo-icon">
-                <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                <!-- Light Logo icon -->
-                <img src="assets/images/DuDu_LOGO.jpg" alt="homepage" class="light-logo" />
-              </b>
-              <!--End Logo icon -->
-              <!-- Logo text -->
-              <span class="logo-text">
-                <!-- Light Logo text -->
-                <img src="assets/images/DuDu_LOGOtext.png" class="light-logo" alt="homepage" />
-              </span>
-            </a>
-          </div>
-          <!-- ============================================================== -->
-          <!-- End Logo -->
-          <!-- ============================================================== -->
-          <!-- ============================================================== -->
-          <!-- Toggle which is visible on mobile only -->
-          <!-- ============================================================== -->
-        </div>
-        <!-- ============================================================== -->
-        <!-- End Logo -->
-        <!-- ============================================================== -->
-        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-          <!-- ============================================================== -->
-          <!-- toggle and nav items -->
-          <!-- ============================================================== -->
-          <ul class="navbar-nav float-start me-auto">
-            <!-- ============================================================== -->
-            <!-- Search -->
-            <!-- ============================================================== -->
-            <li class="nav-item search-box">
-              <a class="nav-link waves-effect waves-dark" href="javascript:void(0)">
-                <div class="d-flex align-items-center">
-                  <i class="mdi mdi-magnify font-20 me-1"></i>
-                  <div class="ms-1 d-none d-sm-block">
-                    <span>Search</span>
-                  </div>
+<body class="bg-light">
+
+    <div class="d-flex">
+        <jsp:include page="adminSidebar.jsp" />
+
+        <div class="flex-grow-1 p-4" style="min-height: 100vh;">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                <div>
+                    <h2 class="fw-bold"><i class="bi bi-shield-check text-success"></i> 안전 관제 대시보드</h2>
+                    <p class="text-muted mb-0">우리 지역 전동 킥보드 안전 현황을 실시간으로 모니터링합니다.</p>
                 </div>
-              </a>
-              <form class="app-search position-absolute">
-                <input type="text" class="form-control" placeholder="Search &amp; enter" />
-                <a class="srh-btn">
-                  <i class="mdi mdi mdi-close"></i>
-                </a>
-              </form>
-            </li>
-          </ul>
-          <!-- ============================================================== -->
-          <!-- Right side toggle and nav items -->
-          <!-- ============================================================== -->
-        </div>
-        <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-          <ul class="navbar-nav float-start me-auto"></ul>
-          <ul class="navbar-nav float-end">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                <img src="assets/images/Ellipse 2.png" class="rounded-circle" style="width:30px;height:30px;">
-
-                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-
-                  <a class="dropdown-item" href="profile.jsp">
-                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                    내 정보
-                  </a>
-
-                  <a class="dropdown-item" href="change-password.jsp">
-                    <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
-                    비밀번호 변경
-                  </a>
-
-                  <div class="dropdown-divider"></div>
-
-                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    로그아웃
-                  </a>
-                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#alert">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    알람1
-                  </a>
-                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#alert2">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    알람2
-                  </a>
+                <div class="text-muted small">
+                    <i class="bi bi-clock"></i> Update: <%= new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date()) %>
                 </div>
-            </li>
-            <!-- ============================================================== -->
-            <!-- User profile and search -->
-            <!-- ============================================================== -->
-          </ul>
-          </ul>
-        </div>
-      </nav>
-    </header>
-    <!-- ============================================================== -->
-    <!-- End Topbar header -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-
-   <aside class="left-sidebar" data-sidebarbg="skin5">
-  <div class="scroll-sidebar">
-    <nav class="sidebar-nav">
-      <ul id="sidebarnav">
-        
-        <li class="sidebar-item selected">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link active" href="main.jsp" aria-expanded="false">
-            <i class="mdi mdi-av-timer"></i><span class="hide-menu">메인</span>
-          </a>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-            <i class="mdi mdi-account-settings"></i><span class="hide-menu">관리자 관리</span>
-          </a>
-          <ul aria-expanded="false" class="collapse first-level">
-            <li class="sidebar-item"><a href="admin-login.jsp" class="sidebar-link"><i class="mdi mdi-login"></i><span class="hide-menu">관리자 로그인</span></a></li>
-            <li class="sidebar-item"><a href="admin-join.jsp" class="sidebar-link"><i class="mdi mdi-account-plus"></i><span class="hide-menu">관리자 등록</span></a></li>
-            <li class="sidebar-item"><a href="change-password.jsp" class="sidebar-link"><i class="mdi mdi-key-change"></i><span class="hide-menu">비밀번호 변경</span></a></li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-            <i class="mdi mdi-scooter"></i><span class="hide-menu">킥보드 관리</span>
-          </a>
-          <ul aria-expanded="false" class="collapse first-level">
-            <li class="sidebar-item"><a href="kickboard-list.jsp" class="sidebar-link"><i class="mdi mdi-format-list-bulleted"></i><span class="hide-menu">킥보드 목록</span></a></li>
-            <li class="sidebar-item"><a href="kickboard-register.jsp" class="sidebar-link"><i class="mdi mdi-plus-circle"></i><span class="hide-menu">킥보드 등록</span></a></li>
-            <li class="sidebar-item"><a href="kickboard-status.jsp" class="sidebar-link"><i class="mdi mdi-information"></i><span class="hide-menu">킥보드 상태</span></a></li>
-            <li class="sidebar-item"><a href="device-status.jsp" class="sidebar-link"><i class="mdi mdi-account-network"></i><span class="hide-menu">기기 현황</span></a></li>
-            <li class="sidebar-item"><a href="ride-log-list.jsp" class="sidebar-link"><i class="mdi mdi-history"></i><span class="hide-menu">주행 기록</span></a></li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="user-status.jsp" aria-expanded="false">
-            <i class="mdi mdi-face"></i><span class="hide-menu">유저 관리</span>
-          </a>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-            <i class="mdi mdi-headset"></i><span class="hide-menu">고객센터</span>
-          </a>
-          <ul aria-expanded="false" class="collapse first-level">
-            <li class="sidebar-item"><a href="service-center.jsp" class="sidebar-link"><i class="mdi mdi-email"></i><span class="hide-menu">문의 목록</span></a></li>
-            <li class="sidebar-item"><a href="inquiry-history.jsp" class="sidebar-link"><i class="mdi mdi-history"></i><span class="hide-menu">처리 이력</span></a></li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="data-management.jsp" aria-expanded="false">
-            <i class="mdi mdi-border-none"></i><span class="hide-menu">데이터 관리</span>
-          </a>
-        </li>
-
-      </ul>
-    </nav>
-  </div>
-</aside>
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
-    <div class="page-wrapper">
-      <!-- ============================================================== -->
-      <!-- Bread crumb and right sidebar toggle -->
-      <!-- ============================================================== -->
-      <div class="page-breadcrumb">
-        <div class="row">
-          <div class="col-5 align-self-center">
-            <h4 class="page-title"></h4>
-          </div>
-          <div class="col-7 align-self-center">
-            <div class="d-flex align-items-center justify-content-end">
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item">
-                    <a href="#">홈</a>
-                  </li>
-                  <li class="breadcrumb-item active" aria-current="page">
-                    대쉬보드
-                  </li>
-                </ol>
-              </nav>
             </div>
-          </div>
-        </div>
-      </div>
-      <!-- ============================================================== -->
-      <!-- End Bread crumb and right sidebar toggle -->
-      <!-- ============================================================== -->
-      <!-- ============================================================== -->
-      <!-- Container fluid  -->
-      <!-- ============================================================== -->
-      <div class="container-fluid">
-        <!-- ============================================================== -->
-        <!-- Email campaign chart -->
-        <!-- ============================================================== -->
-        <div class="row">
-          <div class="col-12">
-            <div class="card filter-box">
-              <div class="d-flex align-items-center flex-wrap gap-2">
-                <h5 class="mb-0 me-3 fw-bold"><i class="mdi mdi-calendar-clock"></i> 기간 설정:</h5>
-                <input type="date" class="form-control w-auto" value="2026-01-01">
-                <span class="mx-1">~</span>
-                <input type="date" class="form-control w-auto" value="2026-01-13">
-                <button class="btn btn-primary text-white ms-2">조회하기</button>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- ============================================================== -->
-        <!-- Admin Quick Access Section -->
-        <!-- ============================================================== -->
-        <div class="row mb-4">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title mb-4">
-                  <i class="mdi mdi-speedometer"></i> 관리자 빠른 접근
-                </h4>
-                <div class="row">
-                  <!-- Kickboard Management Card -->
-                  <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card border">
-                      <div class="card-body text-center">
-                        <i class="mdi mdi-scooter font-24 text-primary mb-3"></i>
-                        <h5 class="card-title">킥보드 관리</h5>
-                        <p class="card-text text-muted small">킥보드 목록 조회 및 관리</p>
-                        <a href="kickboard-list.jsp" class="btn btn-primary btn-sm">
-                          <i class="mdi mdi-arrow-right"></i> 이동하기
-                        </a>
-                      </div>
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="card text-white bg-primary h-100 shadow-sm border-0">
+                        <div class="card-body text-center">
+                            <i class="mdi mdi-scooter fs-1"></i>
+                            <h5 class="card-title mt-2">킥보드 기기 관리</h5>
+                            <p class="card-text small opacity-75">기기 상태 및 점검</p>
+                            <a href="kickboard-list.jsp" class="btn btn-sm btn-light text-primary fw-bold w-100">바로가기</a>
+                        </div>
                     </div>
-                  </div>
-                  
-                  <!-- Customer Service Card -->
-                  <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card border">
-                      <div class="card-body text-center">
-                        <i class="mdi mdi-headset font-24 text-success mb-3"></i>
-                        <h5 class="card-title">고객센터</h5>
-                        <p class="card-text text-muted small">고객 문의 확인 및 답변</p>
-                        <a href="service-center.jsp" class="btn btn-success btn-sm">
-                          <i class="mdi mdi-arrow-right"></i> 이동하기
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <!-- User Management Card -->
-                  <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card border">
-                      <div class="card-body text-center">
-                        <i class="mdi mdi-account-group font-24 text-info mb-3"></i>
-                        <h5 class="card-title">사용자 관리</h5>
-                        <p class="card-text text-muted small">사용자 정보 조회 및 관리</p>
-                        <a href="user-status.jsp" class="btn btn-info btn-sm">
-                          <i class="mdi mdi-arrow-right"></i> 이동하기
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <!-- Admin Account Card -->
-                  <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card border">
-                      <div class="card-body text-center">
-                        <i class="mdi mdi-account-settings font-24 text-warning mb-3"></i>
-                        <h5 class="card-title">관리자 계정</h5>
-                        <p class="card-text text-muted small">관리자 계정 설정 및 변경</p>
-                        <a href="change-password.jsp" class="btn btn-warning btn-sm">
-                          <i class="mdi mdi-arrow-right"></i> 이동하기
-                        </a>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- ============================================================== -->
-        <!-- End Admin Quick Access Section -->
-        <!-- ============================================================== -->
-
-        <div class="row">
-          <div class="col-lg-8">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">월별 안전지수 / 헬멧 미착용 발생 건수</h4>
-                <div class="sales ct-charts mt-3"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title mb-1">월간 경고 횟수</h5>
-                <h3 class="font-light">Top 5</h3>
-                <div class="mt-3 text-center">
-                  <div id="earnings"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title mb-0">사용자</h4>
-                <h2 class="font-light">
-                  35,658
-                  <span class="font-16 text-success font-medium">+23%</span>
-                </h2>
-                <div class="mt-4">
-                  <div class="row text-center">
-                    <div class="col-6 border-right">
-                      <h4 class="mb-0">58%</h4>
-                      <span class="font-14 text-muted">실시간</span>
+                <div class="col-6 col-md-3">
+                    <div class="card text-white bg-success h-100 shadow-sm border-0">
+                        <div class="card-body text-center">
+                            <i class="mdi mdi-headset fs-1"></i>
+                            <h5 class="card-title mt-2">민원/문의 관리</h5>
+                            <p class="card-text small opacity-75">사용자 불편 접수 현황</p>
+                            <a href="service-center.jsp" class="btn btn-sm btn-light text-success fw-bold w-100">바로가기</a>
+                        </div>
                     </div>
-                    <div class="col-6">
-                      <h4 class="mb-0">42%</h4>
-                      <span class="font-14 text-muted">일일</span>
-                    </div>
-                  </div>
                 </div>
-              </div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-dark bg-warning h-100 shadow-sm border-0">
+                        <div class="card-body text-center">
+                            <i class="mdi mdi-account-group fs-1"></i>
+                            <h5 class="card-title mt-2">회원 관리</h5>
+                            <p class="card-text small opacity-75">안전 점수 및 제재</p>
+                            <a href="user-status.jsp" class="btn btn-sm btn-light text-warning fw-bold w-100">바로가기</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-white bg-dark h-100 shadow-sm border-0">
+                        <div class="card-body text-center">
+                            <i class="mdi mdi-account-key fs-1"></i>
+                            <h5 class="card-title mt-2">관리자 설정</h5>
+                            <p class="card-text small opacity-75">계정 및 보안 설정</p>
+                            <a href="#" class="btn btn-sm btn-secondary fw-bold w-100">설정하기</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <!-- ============================================================== -->
-        <!-- Email campaign chart -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Ravenue - page-view-bounce rate -->
-        <!-- ============================================================== -->
-        <div class="row">
-          <!-- column -->
-          <div class="col-12">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">개별 사용자 데이터</h4>
-              </div>
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th class="border-top-0">이름</th>
-                      <th class="border-top-0">상태</th>
-                      <th class="border-top-0">마지막 탑승 날짜</th>
-                      <th class="border-top-0">안전 점수</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user001'">
-                      <td class="txt-oflo">Elite admin</td>
-                      <td>
-                        <span class="label label-warning label-rounded">주의</span>
-                      </td>
-                      <td class="txt-oflo">2026.01.02</td>
-                      <td><span class="font-medium">54</span></td>
-                    </tr>
-                    <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user002'">
-                      <td class="txt-oflo">Real Homes WP Theme</td>
-                      <td>
-                        <span class="label label-danger label-rounded">미착용</span>
-                      </td>
-                      <td class="txt-oflo">2026.01.10</td>
-                      <td><span class="font-medium">85</span></td>
-                    </tr>
-                    <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user003'">
-                      <td class="txt-oflo">Ample Admin</td>
-                      <td>
-                        <span class="label label-success label-rounded">안전</span>
-                      </td>
-                      <td class="txt-oflo">2026.01.13</td>
-                      <td><span class="font-medium">46</span></td>
-                    </tr>
-                    <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user004'">
-                      <td class="txt-oflo">Medical Pro WP Theme</td>
-                      <td>
-                        <span class="label label-success label-rounded">안전</span>
-                      </td>
-                      <td class="txt-oflo">2026.01.01</td>
-                      <td><span class="font-medium">71</span></td>
-                    </tr>
-                    <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user005'">
-                      <td class="txt-oflo">Hosting press html</td>
-                      <td>
-                        <span class="label label-success label-rounded">안전</span>
-                      </td>
-                      <td class="txt-oflo">2025.12.13</td>
-                      <td><span class="font-medium">63</span></td>
-                    </tr>
-                    <tr style="cursor: pointer;" onclick="location.href='user-detail.jsp?userId=user006'">
-                      <td class="txt-oflo">Digital Agency PSD</td>
-                      <td>
-                        <span class="label label-danger label-rounded">Tax</span>
-                      </td>
-                      <td class="txt-oflo">2025.12.25</td>
-                      <td><span class="font-medium">25</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="card-title text-secondary">📉 일별 안전점수 변동 & 경고 발생 추이</h5>
+                            <p class="text-muted small">최근 7일간의 주행 데이터를 분석한 결과입니다.</p>
+                            <div style="height: 300px;">
+                                <canvas id="mainTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card mb-3 shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">🚨 상습 안전수칙 위반 (Top 5)</h5>
+                            <div style="height: 180px;">
+                                <canvas id="worstUserChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body text-center py-4">
+                            <h5 class="card-title text-muted">등록된 사용자 수</h5>
+                            <h2 class="display-4 fw-bold text-primary">
+                                <%= String.format("%,d", totalUserCount) %><span class="fs-4 text-muted">명</span>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <!-- ============================================================== -->
-        <!-- Ravenue - page-view-bounce rate -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Recent comment and chats -->
-        <!-- ============================================================== -->
-      </div>
-      <!-- ============================================================== -->
-      <!-- End Container fluid  -->
-      <!-- ============================================================== -->
-      <!-- ============================================================== -->
-      <!-- footer -->
-      <!-- ============================================================== -->
-      <footer class="footer text-center">
-        All Rights Reserved by Nice admin. Designed and Developed by
-        <a href="https://www.wrappixel.com">WrapPixel</a>.
-      </footer>
-      <!-- ============================================================== -->
-      <!-- End footer -->
-      <!-- ============================================================== -->
-    </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-  </div>
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">로그아웃 하시겠습니까?</h5>
-          <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">취소</button>
-          <a class="btn btn-primary" href="login.jsp">로그아웃</a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal fade" id="alert" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">헬멧을 착용해주세요</h5>
-            <button class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">확인</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal fade" id="alert2" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">핸드폰 소리를 키워주세요</h5>
-            <button class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">확인</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  <!-- ============================================================== -->
-  <!-- End Wrapper -->
-  <!-- ============================================================== -->
-  <!-- ============================================================== -->
-  <!-- All Jquery -->
-  <!-- ============================================================== -->
-  <script src="assets/libs/jquery/dist/jquery.min.js"></script>
-  <!-- Bootstrap tether Core JavaScript -->
-  <script src="assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- slimscrollbar scrollbar JavaScript -->
-  <script src="assets/extra-libs/sparkline/sparkline.js"></script>
-  <!--Wave Effects -->
-  <script src="js/waves.js"></script>
-  <!--Menu sidebar -->
-  <script src="js/sidebarmenu.js"></script>
-  <!--Custom JavaScript -->
-  <script src="js/custom.min.js"></script>
-  <!--This page JavaScript -->
-  <!--chartis chart-->
-  <script src="assets/libs/chartist/dist/chartist.min.js"></script>
-  <script src="assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
-  <script src="js/pages/dashboards/dashboard1.js"></script>
-  
-  <!-- ============================================================== -->
-  <!-- Verification Checklist -->
-  <!-- ============================================================== -->
-  <!--
-    ✅ VERIFICATION CHECKLIST:
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-person-plus"></i> 최근 가입 사용자 목록</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">이름 (ID)</th>
+                                    <th>안전 등급</th>
+                                    <th>가입일</th>
+                                    <th>현재 안전 점수</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (recentUserList.isEmpty()) { %>
+                                    <tr><td colspan="4" class="text-center py-3">데이터가 없습니다.</td></tr>
+                                <% } else { 
+                                     for (Map<String, String> u : recentUserList) { 
+                                %>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <span class="fw-bold"><%=u.get("name")%></span> 
+                                            <span class="text-muted small">(<%=u.get("id")%>)</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge rounded-pill <%=u.get("badge")%>"><%=u.get("grade")%></span>
+                                        </td>
+                                        <td><%=u.get("date")%></td>
+                                        <td class="text-success fw-bold"><%=u.get("score")%>점</td>
+                                    </tr>
+                                <%   } 
+                                   } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div> 
+    </div> 
     
-    1. Sidebar Navigation:
-       ✅ Dashboard → main.jsp
-       ✅ Admin Management (Grouped):
-          - admin-login.jsp
-          - admin-join.jsp
-          - change-password.jsp
-       ✅ Kickboard Management (Grouped):
-          - kickboard-list.jsp
-          - kickboard-register.jsp
-          - kickboard-status.jsp
-       ✅ User Management → user-status.jsp
-       ✅ Customer Service (Grouped):
-          - service-center.jsp
-          - inquiry-history.jsp
-       ✅ Legacy items preserved (device-status.jsp, data-management.jsp)
-    
-    2. Admin Quick Access Cards:
-       ✅ Kickboard Management → kickboard-list.jsp
-       ✅ Customer Service → service-center.jsp
-       ✅ User Management → user-status.jsp
-       ✅ Admin Account → change-password.jsp
-    
-    3. User Table Navigation:
-       ✅ All table rows are clickable
-       ✅ Rows navigate to user-detail.jsp with userId parameter
-       ✅ Cursor pointer style applied
-    
-    4. Existing Content Preserved:
-       ✅ Date range filter card intact
-       ✅ Chart sections remain unchanged
-       ✅ User data table structure preserved
-       ✅ All existing classes and IDs maintained
-    
-    5. Navigation Flow:
-       ✅ Main Dashboard → Detail Pages → Return to Main
-       ✅ All links use correct file names
-       ✅ No 404 errors expected
-    
-    6. Responsive Layout:
-       ✅ Bootstrap grid system maintained
-       ✅ Cards responsive (col-lg-3 col-md-6)
-       ✅ Table responsive wrapper intact
-  -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // 1. 메인 라인 차트
+        const ctxMain = document.getElementById('mainTrendChart').getContext('2d');
+        new Chart(ctxMain, {
+            type: 'line',
+            data: {
+                labels: [<%= chDates %>], 
+                datasets: [{
+                    label: '평균 점수 변동',
+                    data: [<%= chScores %>],
+                    borderColor: '#2962FF', tension: 0.4,
+                    yAxisID: 'y'
+                }, {
+                    label: '경고 발생 건수',
+                    data: [<%= chWarns %>],
+                    borderColor: '#dc3545', 
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)', 
+                    fill: true, tension: 0.4,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    y: { position: 'left', title: {display: true, text: '점수 변동(점)'} },
+                    y1: { position: 'right', min: 0, grid: {drawOnChartArea: false}, title: {display: true, text: '위반 건수(회)'} }
+                }
+            }
+        });
+
+        // 2. 워스트 유저 바 차트
+        const ctxWorst = document.getElementById('worstUserChart').getContext('2d');
+        new Chart(ctxWorst, {
+            type: 'bar',
+            data: {
+                labels: [<%= chWorstUsers %>],
+                datasets: [{
+                    label: '위반 횟수',
+                    data: [<%= chWorstCounts %>],
+                    backgroundColor: '#dc3545', borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                indexAxis: 'y', // 가로 막대
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
 </body>
-
 </html>
